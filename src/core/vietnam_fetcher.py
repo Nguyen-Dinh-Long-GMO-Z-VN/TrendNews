@@ -6,6 +6,7 @@ returning data in the same format as DataFetcher.crawl_websites().
 """
 
 import re
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Optional, Tuple
 
@@ -68,14 +69,51 @@ class VietnamRSSFetcher:
             return None
 
     def _parse_rss_items(self, content: str, max_items: int = 50) -> List[Tuple[str, str]]:
-        """Extract (title, url) pairs from RSS XML string."""
-        items = []
+        """Extract (title, url) pairs từ RSS XML string.
 
-        # Find all <item> blocks
+        Dùng xml.etree.ElementTree; fallback về regex nếu XML không valid.
+        """
+        try:
+            return self._parse_rss_items_xml(content, max_items)
+        except ET.ParseError:
+            return self._parse_rss_items_regex(content, max_items)
+
+    def _parse_rss_items_xml(self, content: str, max_items: int) -> List[Tuple[str, str]]:
+        """Parse RSS dùng xml.etree — xử lý namespace và CDATA."""
+        import re as _re
+        # Strip namespace declarations để ET xử lý đơn giản hơn
+        content_clean = _re.sub(r'\s+xmlns(?::\w+)?="[^"]+"', '', content)
+        root = ET.fromstring(content_clean)
+
+        items = []
+        for item in root.iter("item"):
+            title_el = item.find("title")
+            title = (title_el.text or "").strip() if title_el is not None else ""
+
+            url = ""
+            link_el = item.find("link")
+            if link_el is not None and link_el.text:
+                url = link_el.text.strip()
+            if not url:
+                guid_el = item.find("guid")
+                if guid_el is not None and guid_el.text:
+                    candidate = guid_el.text.strip()
+                    if candidate.startswith("http"):
+                        url = candidate
+
+            if title:
+                items.append((title, url))
+            if len(items) >= max_items:
+                break
+
+        return items
+
+    def _parse_rss_items_regex(self, content: str, max_items: int) -> List[Tuple[str, str]]:
+        """Fallback regex parser cho malformed XML (dùng logic đã fix từ Task 1)."""
+        items = []
         item_blocks = re.findall(r"<item[^>]*>(.*?)</item>", content, re.DOTALL)
 
         for block in item_blocks[:max_items]:
-            # Extract title: supports CDATA and plain text
             title_match = re.search(
                 r"<title><!\[CDATA\[(.*?)\]\]></title>|<title>(.*?)</title>",
                 block, re.DOTALL
@@ -84,13 +122,10 @@ class VietnamRSSFetcher:
             if title_match:
                 title = (title_match.group(1) or title_match.group(2) or "").strip()
 
-            # Extract link
-            # Check self-closing <link/> explicitly before regex
             is_self_closing = bool(re.search(r"<link\s*/>", block))
-
             link_match = re.search(
                 r"<link><!\[CDATA\[(.*?)\]\]></link>"
-                r"|<link>(.+?)</link>",   # use .+ (one or more) so empty match is rejected
+                r"|<link>(.+?)</link>",
                 block, re.DOTALL
             )
             guid_match = re.search(r"<guid[^>]*>(https?://[^<]+)</guid>", block)
