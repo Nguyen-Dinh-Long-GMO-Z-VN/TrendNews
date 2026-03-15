@@ -35,9 +35,11 @@ from src.utils import (
 
 from src.notifiers import send_to_notifications
 from src.utils.version_check import check_version_update
+from src.core.vietnam_fetcher import VietnamRSSFetcher
 
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from concurrent.futures import ThreadPoolExecutor
 import webbrowser
 
 
@@ -89,6 +91,7 @@ class NewsAnalyzer:
         self.proxy_url = None
         self._setup_proxy()
         self.data_fetcher = DataFetcher(self.proxy_url)
+        self.vietnam_fetcher = VietnamRSSFetcher(self.proxy_url)
 
         if self.is_github_actions:
             self._check_version_update()
@@ -199,10 +202,26 @@ class NewsAnalyzer:
             title_info, self.rank_threshold, new_titles, mode=mode
         )
 
+        # Investment trend analysis (optional, graceful fail)
+        investment_html = ""
+        ia_cfg = CONFIG.get("INVESTMENT_ANALYSIS", {})
+        if ia_cfg.get("ENABLED", False):
+            try:
+                from src.analysis.investment_analyzer import InvestmentAnalyzer
+                analyzer = InvestmentAnalyzer(
+                    min_news_threshold=ia_cfg.get("MIN_NEWS_THRESHOLD", 3),
+                    cache_hours=ia_cfg.get("CACHE_HOURS", 6),
+                )
+                investment_html = analyzer.analyze(stats)
+            except Exception as _ia_err:
+                import logging
+                logging.getLogger(__name__).warning(f"Investment analysis skipped: {_ia_err}")
+
         html_file = HTMLRenderer.generate_report(
             stats, total_titles, failed_ids=failed_ids, new_titles=new_titles,
             id_to_name=id_to_name, mode=mode, is_daily_summary=is_daily_summary,
-            update_info=self.update_info if CONFIG["SHOW_VERSION_UPDATE"] else None
+            update_info=self.update_info if CONFIG["SHOW_VERSION_UPDATE"] else None,
+            investment_html=investment_html,
         )
 
         return stats, html_file
@@ -295,29 +314,49 @@ class NewsAnalyzer:
         print(f"运行Chế độ: {mode_strategy['description']}")
 
     def _crawl_data(self) -> Tuple:
-        ids = []
+        # Tách nền tảng thường (NewsNow) và nền tảng RSS (Việt Nam)
+        newsnow_ids = []
+        rss_platforms = []
+
         for platform in CONFIG["PLATFORMS"]:
-            if "name" in platform:
-                ids.append((platform["id"], platform["name"]))
+            if platform.get("rss_url"):
+                rss_platforms.append(platform)
+            elif "name" in platform:
+                newsnow_ids.append((platform["id"], platform["name"]))
             else:
-                ids.append(platform["id"])
+                newsnow_ids.append(platform["id"])
 
         print(f"配置của监控平台: {[p.get('name', p['id']) for p in CONFIG['PLATFORMS']]}")
         print(f"bắt đầuthu thậpdữ liệu，Yêu cầu间隔 {self.request_interval} mili giây")
         ensure_directory_exists("output")
 
-        results, id_to_name, failed_ids = self.data_fetcher.crawl_websites(ids, self.request_interval)
+        # Fetch NewsNow API platforms và RSS platforms song song
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_newsnow = executor.submit(
+                self.data_fetcher.crawl_websites, newsnow_ids, self.request_interval
+            )
+            future_rss = executor.submit(
+                self.vietnam_fetcher.crawl_vietnam_platforms, rss_platforms, self.request_interval
+            ) if rss_platforms else None
+
+            results, id_to_name, failed_ids = future_newsnow.result()
+
+            if future_rss is not None:
+                vn_results, vn_id_to_name, vn_failed = future_rss.result()
+                results.update(vn_results)
+                id_to_name.update(vn_id_to_name)
+                failed_ids.extend(vn_failed)
 
         title_file = save_titles_to_file(results, id_to_name, failed_ids)
         print(f"标题đãlưuđến: {title_file}")
 
-        return results, id_to_name, failed_ids
+        return results, id_to_name, failed_ids, title_file
 
-    def _execute_mode_strategy(self, mode_strategy, results, id_to_name, failed_ids) -> Optional[str]:
+    def _execute_mode_strategy(self, mode_strategy, results, id_to_name, failed_ids, title_file) -> Optional[str]:
         current_platform_ids = [platform["id"] for platform in CONFIG["PLATFORMS"]]
 
         new_titles = detect_latest_new_titles(current_platform_ids)
-        time_info = Path(save_titles_to_file(results, id_to_name, failed_ids)).stem
+        time_info = Path(title_file).stem
         word_groups, filter_words = load_frequency_words()
 
         if self.report_mode == "current":
@@ -390,8 +429,8 @@ class NewsAnalyzer:
         try:
             self._initialize_and_check_config()
             mode_strategy = self._get_mode_strategy()
-            results, id_to_name, failed_ids = self._crawl_data()
-            self._execute_mode_strategy(mode_strategy, results, id_to_name, failed_ids)
+            results, id_to_name, failed_ids, title_file = self._crawl_data()
+            self._execute_mode_strategy(mode_strategy, results, id_to_name, failed_ids, title_file)
         except Exception as e:
             print(f"phân tích流程执行出错: {e}")
             raise
