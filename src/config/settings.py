@@ -11,6 +11,26 @@ from typing import Dict
 import yaml
 
 
+def _load_dotenv() -> None:
+    """Load .env file into environment variables (simple parser, no extra deps)."""
+    env_path = Path(".env")
+    if not env_path.exists():
+        return
+    with open(env_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = value
+
+
+_load_dotenv()
+
+
 def load_config() -> Dict:
     """
     Load configuration from YAML file and environment variables.
@@ -37,6 +57,7 @@ def load_config() -> Dict:
         "VERSION_CHECK_URL": config_data["app"]["version_check_url"],
         "SHOW_VERSION_UPDATE": config_data["app"]["show_version_update"],
         "REQUEST_INTERVAL": config_data["crawler"]["request_interval"],
+        "RSS_MAX_ITEMS": config_data["crawler"].get("rss_max_items", 50),
         "REPORT_MODE": os.environ.get("REPORT_MODE", "").strip()
         or config_data["report"]["mode"],
         "RANK_THRESHOLD": config_data["report"]["rank_threshold"],
@@ -90,6 +111,13 @@ def load_config() -> Dict:
             "HOTNESS_WEIGHT": config_data["weight"]["hotness_weight"],
         },
         "PLATFORMS": config_data["platforms"],
+    }
+
+    ia_cfg = config_data.get("investment_analysis", {})
+    config["INVESTMENT_ANALYSIS"] = {
+        "ENABLED": ia_cfg.get("enabled", True),
+        "MIN_NEWS_THRESHOLD": ia_cfg.get("min_news_threshold", 3),
+        "CACHE_HOURS": ia_cfg.get("cache_hours", 6),
     }
 
     notification = config_data.get("notification", {})

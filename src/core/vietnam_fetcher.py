@@ -34,12 +34,18 @@ class VietnamRSSFetcher:
             or None on failure.
         """
         try:
+            from src.config.settings import CONFIG
+            max_items = CONFIG.get("RSS_MAX_ITEMS", 50)
+        except Exception:
+            max_items = 50
+
+        try:
             response = self.session.get(rss_url, timeout=10)
             response.raise_for_status()
             response.encoding = response.apparent_encoding or "utf-8"
             content = response.text
 
-            items = self._parse_rss_items(content)
+            items = self._parse_rss_items(content, max_items=max_items)
             if not items:
                 print(f"Lấy {platform_id} thất bại（không parse được RSS）")
                 return None
@@ -61,14 +67,14 @@ class VietnamRSSFetcher:
             print(f"Lấy {platform_id} thất bại: {e}")
             return None
 
-    def _parse_rss_items(self, content: str) -> List[Tuple[str, str]]:
+    def _parse_rss_items(self, content: str, max_items: int = 50) -> List[Tuple[str, str]]:
         """Extract (title, url) pairs from RSS XML string."""
         items = []
 
         # Find all <item> blocks
         item_blocks = re.findall(r"<item[^>]*>(.*?)</item>", content, re.DOTALL)
 
-        for block in item_blocks[:50]:
+        for block in item_blocks[:max_items]:
             # Extract title: supports CDATA and plain text
             title_match = re.search(
                 r"<title><!\[CDATA\[(.*?)\]\]></title>|<title>(.*?)</title>",
