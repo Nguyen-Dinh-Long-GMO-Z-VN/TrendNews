@@ -17,10 +17,13 @@ class VietnamRSSFetcher:
 
     def __init__(self, proxy_url: Optional[str] = None):
         self.proxy_url = proxy_url
-        self.headers = {
+        self.session = requests.Session()
+        self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
             "Accept": "application/rss+xml, application/xml, text/xml, */*",
-        }
+        })
+        if proxy_url:
+            self.session.proxies = {"http": proxy_url, "https": proxy_url}
 
     def fetch_rss(self, platform_id: str, rss_url: str, name: str) -> Optional[Dict]:
         """
@@ -30,12 +33,8 @@ class VietnamRSSFetcher:
             Dict of {title: {"ranks": [rank], "url": url, "mobileUrl": ""}}
             or None on failure.
         """
-        proxies = None
-        if self.proxy_url:
-            proxies = {"http": self.proxy_url, "https": self.proxy_url}
-
         try:
-            response = requests.get(rss_url, headers=self.headers, proxies=proxies, timeout=10)
+            response = self.session.get(rss_url, timeout=10)
             response.raise_for_status()
             response.encoding = response.apparent_encoding or "utf-8"
             content = response.text
