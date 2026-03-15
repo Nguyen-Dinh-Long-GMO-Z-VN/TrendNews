@@ -43,10 +43,18 @@ def calculate_news_weight(news_data: Dict, rank_threshold: int = 5) -> float:
 
     count = news_data.get("count", len(ranks))
 
-    # 权重cấu hình（với config.yaml 保持một致）
-    RANK_WEIGHT = 0.6
-    FREQUENCY_WEIGHT = 0.3
-    HOTNESS_WEIGHT = 0.1
+    # 权重cấu hình（đọc từ CONFIG, fallback về defaults nếu lỗi）
+    try:
+        import sys as _sys, os as _os
+        _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))))
+        from src.config.settings import CONFIG as _CONFIG
+        RANK_WEIGHT = _CONFIG.get("WEIGHT_CONFIG", {}).get("RANK_WEIGHT", 0.6)
+        FREQUENCY_WEIGHT = _CONFIG.get("WEIGHT_CONFIG", {}).get("FREQUENCY_WEIGHT", 0.3)
+        HOTNESS_WEIGHT = _CONFIG.get("WEIGHT_CONFIG", {}).get("HOTNESS_WEIGHT", 0.1)
+    except Exception:
+        RANK_WEIGHT = 0.6
+        FREQUENCY_WEIGHT = 0.3
+        HOTNESS_WEIGHT = 0.1
 
     # 1. Trọng số thứ hạng：Σ(11 - min(rank, 10)) / Số lần xuất hiện
     rank_scores = []
