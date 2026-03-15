@@ -107,12 +107,21 @@ class DataFetcher:
 
         Args:
             ids_list: List of platform IDs or (ID, name) tuples
-            request_interval: Kept for backward compatibility (ignored in concurrent mode)
+            request_interval: DEPRECATED. Không có tác dụng trong concurrent mode và sẽ bị xóa
+                trong phiên bản tương lai. Trước đây dùng để kiểm soát khoảng cách giữa các
+                request, nhưng hiện tại crawl được thực hiện song song.
             max_workers: Maximum number of concurrent threads
 
         Returns:
             Tuple of (results, id_to_name, failed_ids)
         """
+        if request_interval is not None:
+            import warnings
+            warnings.warn(
+                "request_interval không có tác dụng trong concurrent mode và sẽ bị xóa trong phiên bản tương lai.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         # Pre-build id_to_name map before spawning threads
         id_to_name = {}
         for id_info in ids_list:
