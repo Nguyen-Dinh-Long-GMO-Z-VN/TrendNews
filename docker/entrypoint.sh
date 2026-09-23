@@ -18,7 +18,7 @@ case "${RUN_MODE:-cron}" in
 "cron")
     # 生成 crontab
     echo "${CRON_SCHEDULE:-*/30 * * * *} cd /app && /usr/local/bin/python main.py" > /tmp/crontab
-    
+
     echo "📅 生成的crontab内容:"
     cat /tmp/crontab
 
@@ -35,7 +35,7 @@ case "${RUN_MODE:-cron}" in
 
     echo "⏰ 启动supercronic: ${CRON_SCHEDULE:-*/30 * * * *}"
     echo "🎯 supercronic 将作为 PID 1 运行"
-    
+
     exec /usr/local/bin/supercronic -passthrough-logs /tmp/crontab
     ;;
 *)

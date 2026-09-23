@@ -1,10 +1,11 @@
 from typing import List, Dict, Optional, Tuple
 from src.config import CONFIG
 from src.utils import is_first_crawl_today, format_time_display
+from src.processors.frequency_words import _word_matches
 
 
 def matches_word_groups(
-    title: str, word_groups: List[Dict], filter_words: List[str]
+    title: str, word_groups: List[Dict], filter_words: List
 ) -> bool:
     """检查标题là否khớp词组规则"""
     # Kiểm tra kiểu phòng thủ：đảm bảo title là chuỗi hợp lệ
@@ -20,7 +21,7 @@ def matches_word_groups(
     title_lower = title.lower()
 
     # Kiểm tra từ lọc
-    if any(filter_word.lower() in title_lower for filter_word in filter_words):
+    if any(_word_matches(filter_word, title_lower) for filter_word in filter_words):
         return False
 
     # Kiểm tra khớp nhóm từ
@@ -31,7 +32,7 @@ def matches_word_groups(
         # Kiểm tra từ bắt buộc
         if required_words:
             all_required_present = all(
-                req_word.lower() in title_lower for req_word in required_words
+                _word_matches(req_word, title_lower) for req_word in required_words
             )
             if not all_required_present:
                 continue
@@ -39,7 +40,8 @@ def matches_word_groups(
         # Kiểm tra từ thông thường
         if normal_words:
             any_normal_present = any(
-                normal_word.lower() in title_lower for normal_word in normal_words
+                _word_matches(normal_word, title_lower)
+                for normal_word in normal_words
             )
             if not any_normal_present:
                 continue
@@ -64,7 +66,15 @@ def count_word_frequency(
     # Nếu không cấu hình nhóm từ，tạomột包含所cómới闻của虚拟词组
     if not word_groups:
         print("Cấu hình từ tần suất trống，sẽ hiển thị tất cả tin tức")
-        word_groups = [{"required": [], "normal": [], "group_key": "tất cả tin tức"}]
+        word_groups = [
+            {
+                "required": [],
+                "normal": [],
+                "group_key": "tất cả tin tức",
+                "display_name": "Tất cả tin tức",
+                "max_count": 0,
+            }
+        ]
         filter_words = []  # 清空lọc词，显示所cótin tức
 
     is_first_today = is_first_crawl_today()
@@ -182,7 +192,7 @@ def count_word_frequency(
                     # Logic khớp ban đầu
                     if required_words:
                         all_required_present = all(
-                            req_word.lower() in title_lower
+                            _word_matches(req_word, title_lower)
                             for req_word in required_words
                         )
                         if not all_required_present:
@@ -190,7 +200,7 @@ def count_word_frequency(
 
                     if normal_words:
                         any_normal_present = any(
-                            normal_word.lower() in title_lower
+                            _word_matches(normal_word, title_lower)
                             for normal_word in normal_words
                         )
                         if not any_normal_present:
@@ -207,6 +217,12 @@ def count_word_frequency(
                 ranks = source_ranks if source_ranks else []
                 url = source_url
                 mobile_url = source_mobile_url
+                title_vi = title_data.get("title_vi", "")
+                ai_tag = title_data.get("ai_tag", "")
+                ai_tag_id = title_data.get("ai_tag_id", 999)
+                ai_score = title_data.get("ai_score", 0.0)
+                sources = title_data.get("sources", [source_id])
+                source_count = title_data.get("source_count", 1)
 
                 # Đối với current Chế độ，lấy dữ liệu đầy đủ từ thông tin thống kê lịch sử
                 if (
@@ -223,6 +239,9 @@ def count_word_frequency(
                         ranks = info["ranks"]
                     url = info.get("url", source_url)
                     mobile_url = info.get("mobileUrl", source_mobile_url)
+                    title_vi = info.get("title_vi", "") or title_vi
+                    sources = info.get("sources", sources)
+                    source_count = info.get("source_count", source_count)
                 elif (
                     title_info
                     and source_id in title_info
@@ -236,6 +255,9 @@ def count_word_frequency(
                         ranks = info["ranks"]
                     url = info.get("url", source_url)
                     mobile_url = info.get("mobileUrl", source_mobile_url)
+                    title_vi = info.get("title_vi", "") or title_vi
+                    sources = info.get("sources", sources)
+                    source_count = info.get("source_count", source_count)
 
                 if not ranks:
                     ranks = [99]
@@ -257,7 +279,13 @@ def count_word_frequency(
                 word_stats[group_key]["titles"][source_id].append(
                     {
                         "title": title,
+                        "title_vi": title_vi,
+                        "ai_tag": ai_tag,
+                        "ai_tag_id": ai_tag_id,
+                        "ai_score": ai_score,
                         "source_name": source_name,
+                        "sources": sources,
+                        "source_count": source_count,
                         "first_time": first_time,
                         "last_time": last_time,
                         "time_display": time_display,
@@ -303,6 +331,8 @@ def count_word_frequency(
                 print("Chế độ tăng dần：không phát hiện tin tức mới")
 
     # Chuyển đổi sang định dạng danh sách để sắp xếp
+    # Map group_key -> group để lấy display_name/max_count
+    group_map = {g["group_key"]: g for g in word_groups}
     sorted_stats = []
     for word, data in word_stats.items():
         count = data["count"]
@@ -312,20 +342,90 @@ def count_word_frequency(
             for source_id, titles in data["titles"].items():
                 all_titles.extend(titles)
 
-            # Sắp xếp tin tức：tin mới lên trước，sau đó theo thứ hạng (nhỏ đến lớn), sau đó theo thời gian
+            # Sắp xếp tin tức：tin mới → viral xuyên nguồn (source_count) → rank → thời gian
             all_titles.sort(
                 key=lambda x: (
-                    not x.get("is_new", False),  # False < True, nên not False (True) sẽ ở sau. Muốn True ở trước -> False
+                    not x.get("is_new", False),
+                    -x.get("source_count", 1),
                     min(x["ranks"]) if x["ranks"] else 100,
                     x["last_time"],
                 )
             )
 
+            group_cfg = group_map.get(word, {})
+            max_count = group_cfg.get("max_count", 0)
+            if max_count > 0:
+                all_titles = all_titles[:max_count]
+
             sorted_stats.append(
-                {"word": word, "count": count, "titles": all_titles}
+                {
+                    "word": group_cfg.get("display_name") or word,
+                    "count": count,
+                    "titles": all_titles,
+                }
             )
 
     # Sắp xếp nhóm từ theo số lượng tin tức giảm dần
     sorted_stats.sort(key=lambda x: x["count"], reverse=True)
 
     return sorted_stats, total_titles
+
+
+def regroup_stats_by_ai_tag(stats: List[Dict]) -> List[Dict]:
+    """
+    Gom lại stats theo ai_tag (khi AI filter đã tag tin).
+
+    - Mỗi tin chỉ thuộc ĐÚNG 1 nhóm tag (tag AI gán) → khử trùng lặp hiển thị
+      giữa các keyword groups.
+    - Thứ tự nhóm theo tag_id (= thứ tự ưu tiên trong ai_interests.txt),
+      nhóm không có tag đi cuối.
+    - Tin trong nhóm: ai_score → source_count → is_new → rank → last_time.
+
+    Nếu không có title nào mang ai_tag → trả nguyên stats (fallback keyword).
+    """
+    tagged: Dict[str, Dict] = {}
+    untagged: List[Dict] = []
+
+    for stat in stats:
+        for title_data in stat.get("titles", []):
+            tag = title_data.get("ai_tag", "")
+            entry = tagged.setdefault(
+                tag if tag else "__untagged__",
+                {"tag_id": title_data.get("ai_tag_id", 999), "titles": {}, "seen": set()},
+            )
+            # Khử trùng lặp: title có thể xuất hiện ở nhiều keyword groups
+            if title_data["title"] in entry["seen"]:
+                continue
+            entry["seen"].add(title_data["title"])
+            entry["titles"].setdefault(title_data["source_name"], []).append(title_data)
+
+    if not tagged or "__untagged__" in tagged and len(tagged) == 1:
+        return stats
+
+    regrouped = []
+    for tag, data in tagged.items():
+        all_titles = []
+        for titles in data["titles"].values():
+            all_titles.extend(titles)
+
+        all_titles.sort(
+            key=lambda x: (
+                -x.get("ai_score", 0.0),
+                -x.get("source_count", 1),
+                not x.get("is_new", False),
+                min(x["ranks"]) if x["ranks"] else 100,
+                x["last_time"],
+            )
+        )
+
+        word = tag if tag != "__untagged__" else "Khác"
+        regrouped.append(
+            {"word": word, "count": len(all_titles), "titles": all_titles,
+             "_tag_id": data["tag_id"]}
+        )
+
+    # Nhóm có tag theo thứ tự ưu tiên (tag_id), "Khác" luôn cuối
+    regrouped.sort(key=lambda x: x["_tag_id"])
+    for g in regrouped:
+        g.pop("_tag_id", None)
+    return regrouped

@@ -120,6 +120,47 @@ def load_config() -> Dict:
         "CACHE_HOURS": ia_cfg.get("cache_hours", 6),
     }
 
+    tr_cfg = config_data.get("translation", {})
+    config["TRANSLATION"] = {
+        "ENABLED": os.environ.get("TRANSLATION_ENABLED", "").strip().lower()
+        in ("true", "1")
+        if os.environ.get("TRANSLATION_ENABLED", "").strip()
+        else tr_cfg.get("enabled", False),
+        "LANGUAGE": tr_cfg.get("language", "Vietnamese"),
+        "BATCH_SIZE": tr_cfg.get("batch_size", 50),
+        "BATCH_DELAY": tr_cfg.get("batch_delay", 2.0),
+        "MAX_RETRIES": tr_cfg.get("max_retries", 2),
+        "CACHE_FILE": tr_cfg.get("cache_file", "data/translation_cache.json"),
+    }
+
+    dd_cfg = config_data.get("dedup", {})
+    config["DEDUP"] = {
+        "ENABLED": os.environ.get("DEDUP_ENABLED", "").strip().lower()
+        in ("true", "1")
+        if os.environ.get("DEDUP_ENABLED", "").strip()
+        else dd_cfg.get("enabled", True),
+        "SIMILARITY_THRESHOLD": dd_cfg.get("similarity_threshold", 0.88),
+    }
+
+    af_cfg = config_data.get("ai_filter", {})
+    config["AI_FILTER"] = {
+        "ENABLED": os.environ.get("AI_FILTER_ENABLED", "").strip().lower()
+        in ("true", "1")
+        if os.environ.get("AI_FILTER_ENABLED", "").strip()
+        else af_cfg.get("enabled", False),
+        "MODE": af_cfg.get("mode", "prefilter"),  # prefilter | replace
+        "INTERESTS_FILE": os.environ.get("AI_INTERESTS_PATH", "").strip()
+        or af_cfg.get("interests_file", "config/ai_interests.txt"),
+        "BATCH_SIZE": af_cfg.get("batch_size", 30),
+        "BATCH_DELAY": af_cfg.get("batch_delay", 4.0),
+        "MAX_RETRIES": af_cfg.get("max_retries", 2),
+        "MIN_SCORE": af_cfg.get("min_score", 0.5),
+        "CRITERIA_CACHE_FILE": af_cfg.get(
+            "criteria_cache_file", "data/ai_criteria_cache.json"
+        ),
+        "DEBUG": af_cfg.get("debug", False),
+    }
+
     notification = config_data.get("notification", {})
     webhooks = notification.get("webhooks", {})
 

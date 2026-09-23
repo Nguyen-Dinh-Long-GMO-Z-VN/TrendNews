@@ -17,6 +17,7 @@ from src.processors.statistics import (
 )
 from src.processors.frequency_words import load_frequency_words
 from src.processors.report_processor import prepare_report_data
+from src.processors.dedup import deduplicate_results, normalize_title
 
 __all__ = [
     "save_titles_to_file",
@@ -28,4 +29,6 @@ __all__ = [
     "matches_word_groups",
     "count_word_frequency",
     "prepare_report_data",
+    "deduplicate_results",
+    "normalize_title",
 ]

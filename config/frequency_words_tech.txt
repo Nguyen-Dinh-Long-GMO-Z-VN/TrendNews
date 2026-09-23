@@ -1,0 +1,841 @@
+[AI / LLM / Models]
+@20
+# Từ viết tắt dễ bắt nhầm dùng regex word-boundary (syntax mới):
+/\bAI\b/ => AI
+/\bAGI\b/ => AGI
+/\bGPT-?[45o]\b/ => GPT
+/\bLLM(s)?\b/ => LLM
+ChatGPT
+GPT-4
+GPT-5
+OpenAI
+Claude
+Anthropic
+Gemini
+DeepMind
+Grok
+xAI
+DeepSeek
+Qwen
+通义千问
+Kimi
+Llama
+Mistral
+Sora
+Midjourney
+Stable Diffusion
+Perplexity
+Hugging Face
+Manus
+artificial intelligence
+trí tuệ nhân tạo
+人工智能
+大模型
+通用人工智能
+智能体
+
+[AI tin tức chung]
++ai
+model
+agent
+assistant
+chatbot
+coding
+chip
+app
+feature
+launch
+release
+startup
+safety
+regulation
+research
+benchmark
+image
+video
+search
+browser
+robot
+generated
+powered
+智能
+模型
+助手
+应用
+算力
+
+[AGI]
++agi
+artificial
+general
+openai
+altman
+singularity
+superintelligence
+超级智能
+
+[AI Coding Tools]
+Cursor
+Windsurf
+GitHub Copilot
+Copilot
+Claude Code
+Codex
+Devin
+Codeium
+Aider
+Amazon Q
+Tabnine
+vibe coding
+AI coding
+coding agent
+SWE-bench
+Trae
+Sourcegraph
+Cody
+
+[Machine Learning]
+machine learning
+deep learning
+LLM
+large language model
+fine-tuning
+finetune
+QLoRA
+quantization
+distillation
+embedding
+vector database
+PyTorch
+TensorFlow
+CUDA
+inference
+context window
+multimodal
+diffusion model
+prompt engineering
+prompt injection
+model context protocol
+function calling
+reasoning model
+chain-of-thought
+open weights
+neural network
+机器学习
+深度学习
+神经网络
+强化学习
+微调
+推理
+检索增强
+
+[RAG]
++rag
+retrieval
+llm
+embedding
+vector
+pipeline
+search
+
+[LoRA]
++lora
+adapter
+fine-tun
+training
+model
+qlora
+
+[Transformer]
++transformer
+model
+ai
+attention
+neural
+architecture
+paper
+
+[Ngôn ngữ lập trình (an toàn)]
+Python
+Python3
+JavaScript
+TypeScript
+Java
+Kotlin
+SwiftUI
+C++
+C#
+PHP
+Golang
+Elixir
+Haskell
+Perl
+Fortran
+MATLAB
+programming language
+ngôn ngữ lập trình
+Android
+smartphone
+mobile app
+
+[Go]
++go
+golang
+google
+programming
+release
+version
+language
+generics
+goroutine
+module
+compiler
+
+[Rust]
++rust
+cargo
+crate
+crates
+linux
+kernel
+foundation
+programming
+language
+release
+compile
+compiler
+version
+borrow
+unsafe
+
+[Swift]
++swift
+apple
+ios
+xcode
+swiftui
+programming
+language
+sdk
+
+[Ruby]
++ruby
+rails
+programming
+gem
+language
+
+[Dart / Lua / Julia / Zig]
++dart
+flutter
+language
+programming
+
+[Lua]
++lua
+script
+game
+neovim
+programming
+
+[Julia]
++julia
+programming
+computing
+language
+
+[Zig]
++zig
+programming
+language
+compiler
+
+[Framework / Web (an toàn)]
+React Native
+ReactJS
+Next.js
+NextJS
+Vue.js
+VueJS
+Nuxt
+Svelte
+SvelteKit
+Angular
+SolidJS
+Qwik
+Node.js
+NodeJS
+Deno
+esbuild
+Webpack
+Tailwind
+shadcn
+Three.js
+WebGL
+FastAPI
+Django
+Spring Boot
+NestJS
+Laravel
+Symfony
+Ruby on Rails
+.NET
+ASP.NET
+WordPress
+Flutter
+Electron
+Tauri
+WASM
+WebAssembly
+frontend
+front-end
+backend
+full-stack
+web framework
+
+[React]
++react
+native
+js
+javascript
+component
+framework
+compiler
+meta
+vercel
+19
+
+[Vue]
++vue
+nuxt
+js
+javascript
+framework
+vite
+
+[Astro]
++astro
+framework
+web
+build
+ssr
+islands
+
+[Remix]
++remix
+framework
+react
+web
+router
+
+[Node]
++node
+js
+javascript
+runtime
+version
+npm
+
+[Bun]
++bun
+javascript
+runtime
+js
+bundler
+
+[Vite]
++vite
+build
+frontend
+rollup
+dev
+
+[Flask]
++flask
+python
+web
+framework
+
+[Spring]
++spring
+boot
+java
+framework
+cloud
+
+[Rails]
++rails
+ruby
+framework
+web
+
+[Expo]
++expo
+react
+mobile
+app
+sdk
+
+[iOS]
++ios
+apple
+iphone
+ipad
+app
+version
+update
+
+[DevOps / Cloud / Data (an toàn)]
+Docker
+Kubernetes
+K8s
+Terraform
+Ansible
+CI/CD
+DevOps
+GitHub
+GitLab
+Gitea
+Nginx
+Envoy
+Redis
+PostgreSQL
+Postgres
+MySQL
+SQLite
+MongoDB
+Elasticsearch
+ClickHouse
+Databricks
+dbt
+Grafana
+Linux
+Ubuntu
+Debian
+open source
+open-source
+FOSS
+Azure
+Google Cloud
+Cloudflare
+Vercel
+Netlify
+Heroku
+Supabase
+Firebase
+PlanetScale
+serverless
+microservices
+edge computing
+CDN
+API gateway
+GraphQL
+gRPC
+tRPC
+REST API
+SDK
+VSCode
+JetBrains
+IntelliJ
+PyCharm
+Neovim
+Postman
+npm
+PyPI
+crates.io
+Homebrew
+Stack Overflow
+software
+SaaS
+source code
+refactoring
+debugging
+self-hosted
+
+[AWS]
++aws
+cloud
+amazon
+outage
+ec2
+s3
+lambda
+bedrock
+
+[Jenkins]
++jenkins
+ci
+pipeline
+build
+
+[Kafka]
++kafka
+streaming
+data
+distributed
+confluent
+
+[Mongo]
++mongo
+db
+database
+atlas
+nosql
+
+[Snowflake]
++snowflake
+data
+warehouse
+cloud
+
+[Airflow]
++airflow
+dag
+apache
+pipeline
+data
+
+[Prometheus]
++prometheus
+monitoring
+metrics
+grafana
+
+[Neon]
++neon
+database
+serverless
+postgres
+
+[Lambda]
++lambda
+aws
+function
+serverless
+
+[App]
++app
+store
+mobile
+ios
+android
+download
+launch
+
+[API]
++api
+rest
+graphql
+developer
+openai
+release
+endpoint
+pricing
+docs
+
+[CLI]
++cli
+tool
+command
+terminal
+npm
+github
+
+[Big Tech]
+Google
+Microsoft
+NVIDIA
+英伟达
+黄仁勋
+AMD
+Qualcomm
+TSMC
+台积电
+Samsung
+ASML
+Tesla
+SpaceX
+Starlink
+Oracle
+IBM
+Salesforce
+Adobe
+TikTok
+ByteDance
+字节跳动
+Huawei
+华为
+Tencent
+腾讯
+Alibaba
+阿里巴巴
+Xiaomi
+小米
+Baidu
+百度
+Broadcom
+Micron
+Foxconn
+
+[Apple]
++apple
+iphone
+ios
+mac
+macbook
+macos
+wwdc
+vision
+siri
+cook
+foxconn
+intelligence
+store
+ipad
+airpods
+watch
+earnings
+ai
+chip
+tariff
+
+[Meta]
++meta
+facebook
+instagram
+whatsapp
+zuckerberg
+llama
+quest
+ai
+layoff
+threads
+
+[Amazon]
++amazon
+aws
+cloud
+tech
+e-commerce
+prime
+alexa
+
+[Intel]
++intel
+chip
+cpu
+core
+processor
+foundry
+semiconductor
+arc
+
+[ARM]
++arm
+chip
+processor
+cpu
+architecture
+risc-v
+qualcomm
+
+[Cybersecurity]
+cybersecurity
+data breach
+vulnerability
+CVE-
+zero-day
+0-day
+ransomware
+malware
+phishing
+spyware
+backdoor
+botnet
+DDoS
+infostealer
+keylogger
+trojan
+hacker
+hacking
+encryption
+security flaw
+security update
+Krebs
+CISA
+黑客
+漏洞
+网络攻击
+数据泄露
+an ninh mạng
+lỗ hổng bảo mật
+mã độc
+tấn công mạng
+
+[Exploit]
++exploit
+vulnerability
+security
+cve
+hack
+zero-day
+
+[Patch]
++patch
+security
+tuesday
+windows
+update
+fix
+vulnerability
+
+[Chips / Hardware]
+semiconductor
+chipmaker
+GPU
+CPU
+wafer
+EUV
+lithography
+HBM
+3nm
+2nm
+5nm
+7nm
+RTX
+Radeon
+GeForce
+Apple Silicon
+Snapdragon
+Dimensity
+RISC-V
+FPGA
+芯片
+半导体
+晶圆
+光刻机
+显卡
+存储芯片
+
+[Chip]
++chip
+semiconductor
+wafer
+nvidia
+export
+ban
+ai
+gpu
+maker
+act
+war
+shortage
+tsmc
+
+[Foundry]
++foundry
+chip
+intel
+tsmc
+semiconductor
+
+[ASIC]
++asic
+chip
+mining
+bitcoin
+custom
+
+[SoC]
++soc
+chip
+qualcomm
+snapdragon
+silicon
+
+[Tech VN]
+công nghệ
+phần mềm
+lập trình
+lập trình viên
+developer
+chuyển đổi số
+công nghệ thông tin
+công nghệ số
+khoa học dữ liệu
+dữ liệu lớn
+big data
+điện toán đám mây
+trung tâm dữ liệu
+tin học
+viễn thông
+số hóa
+make in vietnam
+FPT
+VNG
+VinAI
+Viettel
+VNPT
+Zalo
+khởi nghiệp công nghệ
+startup công nghệ
+
+[Emerging Tech]
+quantum computing
+quantum computer
+robotics
+humanoid
+robot
+Boston Dynamics
+Figure AI
+Unitree
+self-driving
+autonomous vehicle
+Waymo
+robotaxi
+LiDAR
+drone
+DJI
+eVTOL
+flying car
+Neuralink
+brain-computer
+augmented reality
+virtual reality
+mixed reality
+Vision Pro
+Quest
+headset
+smart glasses
+metaverse
+Web3
+blockchain
+机器人
+自动驾驶
+量子计算
+无人机
+
+[Tech Business]
+startup
+unicorn
+IPO
+acquisition
+merger
+layoffs
+tech layoff
+Silicon Valley
+Y Combinator
+hackathon
+Product Hunt
+venture capital
+tech earnings
+tech stock
+SaaS
+
+[Series funding]
++series
+funding
+round
+raises
+million
+billion

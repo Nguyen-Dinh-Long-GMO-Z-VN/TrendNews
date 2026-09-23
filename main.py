@@ -197,10 +197,89 @@ class NewsAnalyzer:
         self, data_source, mode, title_info, new_titles, word_groups,
         filter_words, id_to_name, failed_ids=None, is_daily_summary=False
     ) -> Tuple:
+        # 1. Dedup xuyên nguồn — gom tin trùng, thêm source_count (viral signal)
+        dedup_cfg = CONFIG.get("DEDUP", {})
+        if dedup_cfg.get("ENABLED", False):
+            try:
+                from src.processors.dedup import deduplicate_results
+                dedup_stats = deduplicate_results(
+                    data_source, title_info, new_titles,
+                    similarity_threshold=dedup_cfg.get("SIMILARITY_THRESHOLD", 0.88),
+                )
+                if dedup_stats["merged"]:
+                    print(
+                        f"[Dedup] Gộp {dedup_stats['merged']} tin trùng "
+                        f"trong {dedup_stats['clusters']} cụm xuyên nguồn"
+                    )
+            except Exception as e:
+                print(f"[Dedup] Bỏ qua do lỗi: {e}")
+
+        # 2. AI filter tự nhiên — prefilter giữ tin khớp sở thích,
+        #    hoặc replace thay hẳn keyword groups
+        af_cfg = CONFIG.get("AI_FILTER", {})
+        ai_filter_ran = False
+        if af_cfg.get("ENABLED", False):
+            try:
+                from src.analysis.ai_client import AIClient
+                from src.analysis.ai_filter import AIInterestsFilter
+                af_client = AIClient("AIFILTER")
+                afilter = AIInterestsFilter(af_client, af_cfg)
+                tag_map = afilter.filter_titles(data_source)
+                if tag_map is not None:
+                    matched_titles = set(tag_map.keys())
+                    for source_id in list(data_source.keys()):
+                        for title in list(data_source[source_id].keys()):
+                            if title in matched_titles:
+                                data_source[source_id][title]["ai_tag"] = tag_map[title]["tag"]
+                                data_source[source_id][title]["ai_score"] = tag_map[title]["score"]
+                                data_source[source_id][title]["ai_tag_id"] = tag_map[title]["tag_id"]
+                            else:
+                                data_source[source_id].pop(title)
+                        if not data_source[source_id]:
+                            data_source.pop(source_id)
+                    if af_cfg.get("MODE") == "replace":
+                        word_groups, filter_words = [], []
+                    ai_filter_ran = True
+                else:
+                    print("[AI lọc] AI không khả dụng → giữ nguyên keyword filter")
+            except Exception as e:
+                print(f"[AI lọc] Bỏ qua do lỗi: {e}")
+
+        # 3. Dịch tiêu đề sang tiếng Việt (tất cả tin còn lại)
+        tr_cfg = CONFIG.get("TRANSLATION", {})
+        if tr_cfg.get("ENABLED", False):
+            try:
+                from src.analysis.ai_client import AIClient
+                from src.analysis.translator import TitleTranslator
+                tr_client = AIClient("TRANSLATE")
+                translator = TitleTranslator(tr_client, tr_cfg)
+                all_titles = []
+                for source_id, titles in data_source.items():
+                    all_titles.extend(titles.keys())
+                vi_map = translator.translate_map(all_titles)
+                for source_id, titles in data_source.items():
+                    for title in titles.keys():
+                        vi = vi_map.get(title)
+                        if vi and vi != title:
+                            titles[title]["title_vi"] = vi
+                            if (
+                                title_info
+                                and source_id in title_info
+                                and title in title_info[source_id]
+                            ):
+                                title_info[source_id][title]["title_vi"] = vi
+            except Exception as e:
+                print(f"[Dịch] Bỏ qua do lỗi: {e}")
+
         stats, total_titles = count_word_frequency(
             data_source, word_groups, filter_words, id_to_name,
             title_info, self.rank_threshold, new_titles, mode=mode
         )
+
+        # Group report theo AI tag thay keyword groups (sạch + khử trùng lặp)
+        if ai_filter_ran:
+            from src.processors.statistics import regroup_stats_by_ai_tag
+            stats = regroup_stats_by_ai_tag(stats)
 
         # Investment trend analysis (optional, graceful fail)
         investment_html = ""

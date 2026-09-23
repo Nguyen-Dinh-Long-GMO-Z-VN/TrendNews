@@ -42,6 +42,7 @@ def prepare_report_data(
 
                     processed_title = {
                         "title": title,
+                        "title_vi": title_data.get("title_vi", ""),
                         "source_name": source_name,
                         "time_display": "",
                         "count": 1,
@@ -50,6 +51,8 @@ def prepare_report_data(
                         "url": url,
                         "mobile_url": mobile_url,
                         "is_new": True,
+                        "sources": title_data.get("sources", [source_id]),
+                        "source_count": title_data.get("source_count", 1),
                     }
                     source_titles.append(processed_title)
 
@@ -71,6 +74,10 @@ def prepare_report_data(
         for title_data in stat["titles"]:
             processed_title = {
                 "title": title_data["title"],
+                "title_vi": title_data.get("title_vi", ""),
+                "ai_tag": title_data.get("ai_tag", ""),
+                "ai_tag_id": title_data.get("ai_tag_id", 999),
+                "ai_score": title_data.get("ai_score", 0.0),
                 "source_name": title_data["source_name"],
                 "time_display": title_data["time_display"],
                 "count": title_data["count"],
@@ -79,6 +86,8 @@ def prepare_report_data(
                 "url": title_data.get("url", ""),
                 "mobile_url": title_data.get("mobileUrl", ""),
                 "is_new": title_data.get("is_new", False),
+                "sources": title_data.get("sources", []),
+                "source_count": title_data.get("source_count", 1),
             }
             processed_titles.append(processed_title)
 

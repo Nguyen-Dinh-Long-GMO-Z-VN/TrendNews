@@ -2229,3 +2229,606 @@ Neuralink
 技术哲学
 技术伦理
 人机关系
+
+# ===== 政治/两会 =====
+两会
+全国人大
+全国政协
+人大代表
+政协委员
+政府工作报告
+提案
+建议案
+常委会
+人大四次会议
+政协四次会议
+国务院
+总理
+副总理
+国家主席
+中央政治局
+中央委员会
+习近平
+李强
+王沪宁
+
+# ===== 政策/法规 =====
+政策
+新政
+法规
+条例
+监管政策
+改革
+调控
+补贴政策
+税收政策
+个税
+起征点
+劳务派遣
+高考改革
+教育改革
+医保改革
+户籍改革
+身份证
+养老金
+退休年龄
+
+# ===== 中东局势 =====
+伊朗
+以色列
+美以
+哈马斯
+真主党
+胡塞武装
+霍尔木兹
+中东
+中东战争
+军事打击
+导弹袭击
+空袭
+哈梅内伊
+内塔尼亚胡
+最高领袖
+核协议
+伊核
+石油禁运
+能源危机
+
+# ===== 国际关系/外交 =====
+特朗普
+拜登
+白宫
+国务院
+国会
+制裁
+关税战
+贸易摩擦
+中美关系
+中欧关系
+俄乌战争
+北约
+G7
+G20
+联合国
+安理会
+马克龙
+默茨
+欧盟
+外交部
+驻华大使
+外长
+
+# ===== 社会热点 =====
+热搜
+热点
+舆论
+事故
+丑闻
+谣言
+辟谣
+维权
+网友热议
+争议
+引发关注
+公众关注
+社会事件
+刑事案件
+违法
+执法
+政府回应
+官方回应
+通报
+
+# ===== 民生/经济生活 =====
+物价
+房价
+楼市
+就业
+失业
+裁员
+降薪
+薪资
+工资
+社保
+公积金
+养老
+医疗费
+教育费
+生活成本
+消费降级
+消费升级
+内卷
+躺平
+人口
+出生率
+老龄化
+生育政策
+
+# ===== 突发事件 =====
+地震
+洪水
+台风
+暴雪
+自然灾害
+事故
+火灾
+爆炸
+交通事故
+坠机
+沉船
+紧急救援
+遇难
+伤亡
+失踪
+搜救
+
+# ===== Tiếng Việt - Chính trị / Nhà nước =====
+Quốc hội
+Chính phủ
+Bộ Chính trị
+Ban Chấp hành Trung ương
+Tổng Bí thư
+Chủ tịch nước
+Thủ tướng
+Chủ tịch Quốc hội
+bầu cử
+đại biểu
+kỳ họp
+nghị quyết
+chỉ thị
+thông tư
+nghị định
+pháp lệnh
+cải cách
+chính sách
+quy hoạch
+phòng chống tham nhũng
+tinh gọn bộ máy
+sắp xếp đơn vị hành chính
+
+# ===== Tiếng Việt - Kinh tế / Tài chính =====
+VN-Index
+HNX
+chứng khoán
+cổ phiếu
+tăng trưởng GDP
+lạm phát
+lãi suất
+tỷ giá
+đồng đô la
+tín dụng
+ngân hàng
+bất động sản
+giá nhà
+thị trường
+xuất khẩu
+nhập khẩu
+FDI
+đầu tư nước ngoài
+doanh nghiệp
+startup
+IPO
+giá vàng
+giá xăng
+giá dầu
+lương tối thiểu
+thuế
+ngân sách
+
+# ===== Tiếng Việt - Xã hội / Pháp luật =====
+tai nạn
+tai nạn giao thông
+tử vong
+bắt giữ
+khởi tố
+bắt khẩn cấp
+lừa đảo
+tham nhũng
+hối lộ
+tội phạm
+ma túy
+trốn thuế
+vi phạm
+xử phạt
+điều tra
+truy tố
+xét xử
+phán quyết
+án tù
+tử hình
+
+# ===== Tiếng Việt - Công nghệ / AI =====
+trí tuệ nhân tạo
+AI
+ChatGPT
+DeepSeek
+chuyển đổi số
+công nghệ thông tin
+phần mềm
+ứng dụng
+dữ liệu
+an ninh mạng
+blockchain
+xe điện
+năng lượng tái tạo
+điện mặt trời
+pin lưu trữ
+
+# ===== Tiếng Việt - Quốc tế =====
+Mỹ
+Trung Quốc
+Iran
+Israel
+Nga
+Ukraine
+chiến tranh
+xung đột
+tên lửa
+eo biển Hormuz
+NATO
+Liên Hợp Quốc
+Trump
+Biden
+trừng phạt
+thương mại
+quan hệ ngoại giao
+Đông Nam Á
+ASEAN
+Nhật Bản
+Hàn Quốc
+
+# ===== Tiếng Việt - Đời sống / Sức khỏe =====
+ung thư
+đột quỵ
+dịch bệnh
+vaccine
+y tế
+bệnh viện
+sức khỏe
+dinh dưỡng
+ô nhiễm
+môi trường
+biến đổi khí hậu
+thiên tai
+lũ lụt
+bão
+hạn hán
+ngập úng
+
+# ===== Tiếng Việt - Giáo dục / Xã hội =====
+giáo dục
+đại học
+tuyển sinh
+học phí
+học bổng
+thi cử
+điểm chuẩn
+việc làm
+thất nghiệp
+lương
+Gen Z
+giới trẻ
+mạng xã hội
+viral
+hot trend
+
+# ===== Tiếng Việt - Doanh nghiệp lớn =====
+Vingroup
+Vinhomes
+VinFast
+Masan
+Hòa Phát
+Vietcombank
+VietinBank
+BIDV
+Techcombank
+MB Bank
+FPT
+Viettel
+VNPT
+Vietnam Airlines
+Bamboo Airways
+Petrovietnam
+EVN
+TH True Milk
+Vinamilk
+
+# ===== English - Politics / Geopolitics =====
+war
+ceasefire
+invasion
+airstrike
+missile
+drone
+nuclear
+sanctions
+diplomacy
+treaty
+summit
+election
+coup
+protest
+revolution
+democracy
+authoritarian
+regime
+government
+parliament
+Congress
+Senate
+White House
+Pentagon
+NATO
+United Nations
+Security Council
+G7
+G20
+
+# ===== English - Middle East / Conflicts =====
+Iran
+Israel
+Hamas
+Hezbollah
+Houthi
+Strait of Hormuz
+Gaza
+West Bank
+Tehran
+Jerusalem
+Tel Aviv
+Khamenei
+Netanyahu
+IRGC
+ballistic missile
+cruise missile
+military strike
+ground offensive
+occupation
+ceasefire deal
+hostage
+prisoner exchange
+
+# ===== English - US Politics / Trump =====
+Trump
+Biden
+Harris
+MAGA
+Republican
+Democrat
+tariff
+trade war
+executive order
+impeachment
+indictment
+DOJ
+FBI
+CIA
+NSA
+Pentagon
+State Department
+Federal Reserve
+interest rate
+inflation
+recession
+
+# ===== English - Russia / Ukraine =====
+Russia
+Ukraine
+Putin
+Zelensky
+Kremlin
+NATO expansion
+Kyiv
+Moscow
+sanctions
+grain deal
+Bakhmut
+frontline
+counteroffensive
+Wagner
+nuclear threat
+energy crisis
+
+# ===== English - China / Taiwan =====
+China
+Taiwan
+Xi Jinping
+PLA
+South China Sea
+Taiwan Strait
+semiconductor
+chip ban
+export controls
+Huawei
+TikTok
+decoupling
+trade deficit
+Belt and Road
+
+# ===== English - AI / Technology =====
+artificial intelligence
+machine learning
+large language model
+LLM
+GPT
+Claude
+Gemini
+DeepSeek
+Llama
+neural network
+deep learning
+computer vision
+natural language processing
+autonomous
+robotics
+cybersecurity
+data breach
+ransomware
+hack
+vulnerability
+zero-day
+quantum computing
+semiconductor
+chip shortage
+GPU
+NVIDIA
+Apple
+Google
+Microsoft
+Meta
+Amazon
+OpenAI
+Anthropic
+xAI
+startup
+unicorn
+venture capital
+IPO
+valuation
+
+# ===== English - Economy / Finance =====
+GDP
+inflation
+interest rate
+Federal Reserve
+Fed
+rate hike
+rate cut
+recession
+unemployment
+stock market
+S&P 500
+Nasdaq
+Dow Jones
+bond yield
+oil price
+gold price
+crude oil
+OPEC
+energy crisis
+supply chain
+trade deficit
+currency
+dollar
+euro
+yen
+bitcoin
+crypto
+blockchain
+DeFi
+ETF
+earnings
+revenue
+profit
+merger
+acquisition
+bankruptcy
+
+# ===== English - Climate / Energy =====
+climate change
+global warming
+carbon emissions
+renewable energy
+solar power
+wind energy
+electric vehicle
+EV
+battery
+lithium
+net zero
+Paris Agreement
+COP
+fossil fuel
+nuclear energy
+oil spill
+drought
+flood
+hurricane
+earthquake
+wildfire
+
+# ===== English - Health / Science =====
+pandemic
+outbreak
+virus
+vaccine
+FDA
+WHO
+cancer
+disease
+epidemic
+mutation
+variant
+clinical trial
+drug approval
+mental health
+obesity
+antibiotic resistance
+biosecurity
+
+# ===== English - Defense / Military =====
+military
+defense
+weapon
+fighter jet
+aircraft carrier
+submarine
+hypersonic
+HIMARS
+Patriot
+Iron Dome
+F-35
+stealth
+intelligence
+OSINT
+satellite imagery
+spy
+espionage
+cyberattack
+critical infrastructure
+
+# ===== English - Companies / Brands =====
+Tesla
+SpaceX
+Apple
+Google
+Microsoft
+Meta
+Amazon
+Netflix
+Nvidia
+Samsung
+TSMC
+Intel
+AMD
+Qualcomm
+Boeing
+Lockheed
+Raytheon
+ExxonMobil
+Shell
+BP
+JPMorgan
+Goldman Sachs
+BlackRock
+Berkshire

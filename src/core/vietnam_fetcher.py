@@ -43,7 +43,9 @@ class VietnamRSSFetcher:
         try:
             response = self.session.get(rss_url, timeout=10)
             response.raise_for_status()
-            response.encoding = response.apparent_encoding or "utf-8"
+            # Ưu tiên charset từ header, fallback UTF-8 (chuẩn XML).
+            # Không dùng apparent_encoding — chardet hay đoán nhầm UTF-8 → mojibake.
+            response.encoding = response.encoding or "utf-8"
             content = response.text
 
             items = self._parse_rss_items(content, max_items=max_items)
@@ -106,10 +108,39 @@ class VietnamRSSFetcher:
             if len(items) >= max_items:
                 break
 
+        # Atom feeds (Reddit .rss, The Verge...) dùng <entry> + <link href="..."/>
+        if not items:
+            for entry in root.iter("entry"):
+                title_el = entry.find("title")
+                title = (title_el.text or "").strip() if title_el is not None else ""
+
+                url = ""
+                link_els = entry.findall("link")
+                # Ưu tiên link rel="alternate" hoặc không có rel (mặc định alternate)
+                for link_el in link_els:
+                    rel = link_el.get("rel", "alternate")
+                    href = link_el.get("href", "")
+                    if rel == "alternate" and href.startswith("http"):
+                        url = href.strip()
+                        break
+                if not url:
+                    for link_el in link_els:
+                        href = link_el.get("href", "")
+                        if href.startswith("http"):
+                            url = href.strip()
+                            break
+
+                if title:
+                    items.append((title, url))
+                if len(items) >= max_items:
+                    break
+
         return items
 
     def _parse_rss_items_regex(self, content: str, max_items: int) -> List[Tuple[str, str]]:
         """Fallback regex parser cho malformed XML (dùng logic đã fix từ Task 1)."""
+        import html as _html
+
         items = []
         item_blocks = re.findall(r"<item[^>]*>(.*?)</item>", content, re.DOTALL)
 
@@ -137,7 +168,34 @@ class VietnamRSSFetcher:
                 url = guid_match.group(1).strip()
 
             if title:
-                items.append((title, url))
+                items.append((_html.unescape(title), url))
+
+        # Atom fallback: <entry> blocks, link nằm trong attribute href
+        if not items:
+            entry_blocks = re.findall(r"<entry[^>]*>(.*?)</entry>", content, re.DOTALL)
+            for block in entry_blocks[:max_items]:
+                title_match = re.search(
+                    r"<title[^>]*><!\[CDATA\[(.*?)\]\]></title>|<title[^>]*>(.*?)</title>",
+                    block, re.DOTALL
+                )
+                title = ""
+                if title_match:
+                    title = (title_match.group(1) or title_match.group(2) or "").strip()
+
+                url = ""
+                for link_match in re.finditer(
+                    r"<link[^>]*href=\"(https?://[^\"]+)\"[^>]*/?>", block
+                ):
+                    tag = link_match.group(0)
+                    href = link_match.group(1)
+                    if 'rel="alternate"' in tag or "rel=" not in tag:
+                        url = href
+                        break
+                    if not url:
+                        url = href
+
+                if title:
+                    items.append((_html.unescape(title), url))
 
         return items
 

@@ -1,0 +1,25 @@
+# ═══════════════════════════════════════════════════════════════
+#        TrendNews AI — Mô tả sở thích bằng ngôn ngữ tự nhiên
+# ═══════════════════════════════════════════════════════════════
+# AI sẽ đọc file này, trích xuất tag, rồi phân loại tin theo tag.
+# Sửa file → lần chạy sau tự động re-extract (cache theo content hash).
+# Thứ tự = độ ưu tiên: tin khớp nhiều tag → gán tag đứng trước.
+
+Dưới đây là nội dung tôi quan tâm (ưu tiên giảm dần từ trên xuống):
+
+1. AI và mô hình ngôn ngữ lớn: OpenAI/ChatGPT/GPT, Anthropic/Claude, Google Gemini/Gemma, DeepSeek, Qwen, Llama, Mistral, Grok, Sora — ra mắt model, benchmark, nâng cấp, giá API, chiến lược mở/đóng source.
+2. AI coding và dev tools: GitHub Copilot, Cursor, Claude Code, Windsurf, Devin, Aider, vibe coding, coding agent, code review bằng AI, IDE tích hợp AI.
+3. Kỹ thuật machine learning: RAG, fine-tuning, LoRA/QLoRA, embedding, vector database, transformer, diffusion, RLHF, agent framework (LangChain, MCP, function calling), inference optimization.
+4. Ngôn ngữ lập trình và framework: Python, JavaScript/TypeScript, Rust, Go, Java, Kotlin, Swift, C++; React, Next.js, Vue, Node.js; release version mới, thay đổi cú pháp, công cụ build.
+5. DevOps, cloud và hạ tầng: Docker, Kubernetes, CI/CD, AWS/GCP/Azure, serverless, database (PostgreSQL, Redis, MongoDB...), observability, sự cố cloud lớn.
+6. Big Tech và chip bán dẫn: NVIDIA, Apple, Google, Microsoft, Meta, Amazon, TSMC, Intel, AMD, Qualcomm — GPU/AI chip, sản phẩm mới, đổi lãnh đạo, kiện tụng, chính sách ảnh hưởng ngành tech.
+7. An ninh mạng: CVE, zero-day, ransomware, data breach, exploit, patch khẩn, mã độc, lừa đảo công nghệ cao, nghiên cứu bảo mật.
+8. Công nghệ Việt Nam: chuyển đổi số, AI/startup Việt, Viettel, VNPT, FPT, Vingroup tech, Zalo, MoMo, số hóa ngân hàng/chính phủ, trung tâm dữ liệu.
+9. Công nghệ mới nổi: robotics/humanoid, quantum computing, xe tự hành, XR/VR/AR, space tech — có ứng dụng hoặc đột phá rõ rệt.
+10. Kinh doanh công nghệ: startup gọi vốn, IPO/M&A ngành tech, layoff/tuyển dụng công ty công nghệ lớn (chỉ tin có ý nghĩa ngành, không tin lặp).
+
+# Yêu cầu chất lượng tiêu đề — dù khớp tag, gặp các dạng sau vẫn bỏ qua:
+- Câu view/giật gân ("sốc", "chấn động", "không thể tin", "vừa xảy ra"...)
+- Quảng cáo, bài PR sản phẩm, seeding, khuyến mãi
+- Tin giải trí/thể thao/đời sống/xã hội không liên quan công nghệ
+- Tin tài chính thuần túy (tỷ giá, vàng, chứng khoán) trừ khi liên quan công ty tech lớn

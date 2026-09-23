@@ -1,0 +1,238 @@
+app:
+  version_check_url: "https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/version"
+  show_version_update: true # 控制显示版本更新提示，如果 false，则不接受新版本提示
+
+crawler:
+  request_interval: 1000 # 请求间隔(毫秒)
+  enable_crawler: true # 是否启用爬取新闻功能，如果 false，则直接停止程序
+  use_proxy: false # 是否启用代理，false 时为关闭
+  default_proxy: "http://127.0.0.1:10086"
+  rss_max_items: 50
+
+# 🔸 daily（当日汇总模式）
+#   • 推送时机：按时推送(默认每小时推送一次)
+#   • 显示内容：当日所有匹配新闻 + 新增新闻区域
+#   • 适用场景：日报总结、全面了解当日热点趋势
+#
+# 🔸 current（当前榜单模式）
+#   • 推送时机：按时推送(默认每小时推送一次)
+#   • 显示内容：当前榜单匹配新闻 + 新增新闻区域
+#   • 适用场景：实时热点追踪、了解当前最火的内容
+#
+# 🔸 incremental（增量监控模式）
+#   • 推送时机：有新增才推送
+#   • 显示内容：新出现的匹配频率词新闻
+#   • 适用场景：避免重复信息干扰
+
+# 推送模式选择
+report:
+  mode: "daily" # 可选: "daily"|"incremental"|"current"
+  rank_threshold: 5 # 排名高亮阈值
+
+notification:
+  enable_notification: false # 是否启用通知功能，如果 false，则不发送手机通知
+  message_batch_size: 4000 # 消息分批大小（字节）(这个配置别动)
+  batch_send_interval: 3 # 批次发送间隔（秒）
+
+  # 🕐 推送时间窗口控制（可选功能）
+  # 用途：限制推送的时间范围，避免非工作时间打扰
+  # 适用场景：
+  #   - 只想在工作日白天接收推送（如 09:00-18:00）
+  #   - 希望在晚上固定时间收到汇总（如 20:00-22:00）
+  push_window:
+    enabled: false  # 是否启用推送时间窗口控制，默认关闭
+    # 注意：GitHub Actions 执行时间不稳定，时间范围建议至少留足 2 小时
+    # 如果想要精准的定时推送，建议使用 Docker 部署在个人服务器上
+    time_range:
+      start: "20:00"  # 推送时间窗口开始（北京时间）
+      end: "22:00"    # 推送时间窗口结束（北京时间）
+    once_per_day: true  # 每天在时间窗口内只推送一次，如果 false，则窗口内每次执行都推送
+    push_record_retention_days: 7  # 推送记录保留天数
+
+  # ⚠️⚠️⚠️ 重要安全警告 / IMPORTANT SECURITY WARNING ⚠️⚠️⚠️
+  #
+  # 🔴 请务必妥善保管好 webhooks，不要公开!!!
+  # 🔴 如果你以 fork 的方式将本项目部署在 GitHub 上，请勿在下面填写任何 webhooks
+  # 🔴 而是将 webhooks 填入 GitHub Secret（Settings → Secrets and variables → Actions）
+  # 🔴 否则：
+  #    - 轻则：手机上收到大量垃圾广告推送
+  #    - 重则：webhook 被滥用造成严重安全隐患（如恶意消息轰炸、钓鱼链接等）
+  #
+  # 🔴 NEVER expose webhooks publicly!!!
+  # 🔴 If deploying via GitHub fork, DO NOT fill webhooks below
+  # 🔴 Instead, add them to GitHub Secrets (Settings → Secrets and variables → Actions)
+  # 🔴 Consequences of exposure:
+  #    - Minor: Spam notifications flooding your devices
+  #    - Severe: Webhook abuse leading to security incidents (malicious messages, phishing links, etc.)
+  #
+  webhooks:
+    telegram_bot_token: "" # Telegram Bot Token
+    telegram_chat_id: "" # Telegram Chat ID
+    email_from: "" # 发件人邮箱地址
+    email_password: "" # 发件人邮箱密码或授权码
+    email_to: "" # 收件人邮箱地址，多个收件人用逗号分隔
+    email_smtp_server: "" # SMTP服务器地址（可选，留空自动识别）
+    email_smtp_port: "" # SMTP端口（可选，留空自动识别）
+
+# 用于让关注度更高的新闻在更前面显示，即用算法重新组合不同平台的热搜排序形成你侧重的热搜，合起来是 1 就行
+weight:
+  rank_weight: 0.6 # 排名权重
+  frequency_weight: 0.3 # 频次权重
+  hotness_weight: 0.1 # 热度权重
+
+investment_analysis:
+  enabled: false  # tắt — tech-only mode không cần phân tích tài sản
+  min_news_threshold: 3  # số tin tức tối thiểu để kích hoạt phân tích một nhóm tài sản
+  cache_hours: 6         # thời gian cache kết quả phân tích (giờ)
+
+# Dịch tất cả tin crawl sang tiếng Việt (Gemini — cấu hình TRANSLATE_* trong .env)
+translation:
+  enabled: false         # đổi thành true sau khi thêm GOOGLE_API_KEY/TRANSLATE_API_KEY
+  language: Vietnamese
+  batch_size: 50
+  batch_delay: 2.0       # tránh rate limit free tier
+  max_retries: 2
+  cache_file: data/translation_cache.json
+
+# Gộp tin trùng xuyên nguồn — quan trọng vì nhiều RSS VN đăng cùng sự kiện
+dedup:
+  enabled: true
+  similarity_threshold: 0.88
+
+# AI lọc tự nhiên theo config/ai_interests.txt (đã viết sẵn cho tech)
+ai_filter:
+  enabled: false         # bật khi muốn AI lọc thay/bổ trợ keyword
+  mode: prefilter
+  interests_file: config/ai_interests.txt
+  batch_size: 30
+  batch_delay: 4.0       # free tier Gemini ~15 RPM — delay thấp sẽ dính 429
+  max_retries: 2
+  min_score: 0.5
+  criteria_cache_file: data/ai_criteria_cache.json
+  debug: false
+
+# name 可以定义任意名称，只具有显示作用，即使项目运行了几天后，忽然改掉 name 也不会影响代码的正常运行
+platforms:
+  # ===== Hot list Trung Quốc (newsnow API) =====
+  - id: "toutiao"
+    name: "今日头条"
+  - id: "baidu"
+    name: "百度热搜"
+  - id: "thepaper"
+    name: "澎湃新闻"
+  - id: "bilibili-hot-search"
+    name: "bilibili 热搜"
+  - id: "ifeng"
+    name: "凤凰网"
+  - id: "tieba"
+    name: "贴吧"
+  - id: "weibo"
+    name: "微博"
+  - id: "douyin"
+    name: "抖音"
+  - id: "zhihu"
+    name: "知乎"
+  - id: "coolapk"
+    name: "酷安"
+  - id: "github-trending-today"
+    name: "GitHub趋势"
+  - id: "sspai"
+    name: "少数派"
+  - id: "v2ex"
+    name: "V2EX"
+  - id: "36kr"
+    name: "36氪"
+  - id: "ithome"
+    name: "IT之家"
+  - id: "juejin"
+    name: "掘金"
+  - id: "producthunt"
+    name: "Product Hunt"
+
+  # ===== Việt Nam — Tech (RSS) =====
+  - id: "vnexpress"
+    name: "VnExpress"
+    rss_url: "https://vnexpress.net/rss/tin-moi-nhat.rss"
+  - id: "vnexpress-tech"
+    name: "VnExpress KHCN"
+    rss_url: "https://vnexpress.net/rss/khoa-hoc-cong-nghe.rss"
+  - id: "dantri"
+    name: "Dân Trí"
+    rss_url: "https://dantri.com.vn/rss/home.rss"
+  - id: "dantri-sucmanhso"
+    name: "Dân Trí Sức Mạnh Số"
+    rss_url: "https://dantri.com.vn/rss/suc-manh-so.rss"
+  - id: "tuoitre"
+    name: "Tuổi Trẻ"
+    rss_url: "https://tuoitre.vn/rss/tin-moi-nhat.rss"
+  - id: "tuoitre-tech"
+    name: "Tuổi Trẻ Công Nghệ"
+    rss_url: "https://tuoitre.vn/rss/cong-nghe.rss"
+  - id: "genk"
+    name: "GenK"
+    rss_url: "https://genk.vn/rss/home.rss"
+  - id: "tinhte"
+    name: "Tinh Tế"
+    rss_url: "https://tinhte.vn/rss"
+
+  # ===== Tech quốc tế (RSS) =====
+  - id: "arxiv-ai"
+    name: "ArXiv AI"
+    rss_url: "https://export.arxiv.org/rss/cs.AI"
+  - id: "arxiv-ml"
+    name: "ArXiv ML"
+    rss_url: "https://export.arxiv.org/rss/cs.LG"
+  - id: "hackernews"
+    name: "Hacker News"
+    rss_url: "https://hnrss.org/frontpage"
+  - id: "mit-tech-review"
+    name: "MIT Tech Review"
+    rss_url: "https://www.technologyreview.com/feed/"
+  - id: "venturebeat-ai"
+    name: "VentureBeat AI"
+    rss_url: "https://venturebeat.com/category/ai/feed/"
+  - id: "techcrunch"
+    name: "TechCrunch"
+    rss_url: "https://techcrunch.com/feed/"
+  - id: "arstechnica"
+    name: "Ars Technica"
+    rss_url: "https://feeds.arstechnica.com/arstechnica/technology-lab"
+  - id: "theverge"
+    name: "The Verge"
+    rss_url: "https://www.theverge.com/rss/index.xml"
+  - id: "wired"
+    name: "Wired"
+    rss_url: "https://www.wired.com/feed/rss"
+  - id: "bbc-technology"
+    name: "BBC Technology"
+    rss_url: "https://feeds.bbci.co.uk/news/technology/rss.xml"
+
+  # ===== Security (RSS) =====
+  - id: "krebs-security"
+    name: "Krebs on Security"
+    rss_url: "https://krebsonsecurity.com/feed/"
+  - id: "hacker-news-sec"
+    name: "The Hacker News"
+    rss_url: "https://feeds.feedburner.com/TheHackersNews"
+  - id: "dark-reading"
+    name: "Dark Reading"
+    rss_url: "https://www.darkreading.com/rss.xml"
+  - id: "schneier"
+    name: "Schneier on Security"
+    rss_url: "https://www.schneier.com/feed/"
+
+  # ===== Science (RSS) =====
+  - id: "sciencedaily"
+    name: "ScienceDaily"
+    rss_url: "https://www.sciencedaily.com/rss/all.xml"
+  - id: "nature-news"
+    name: "Nature News"
+    rss_url: "https://feeds.nature.com/nature/rss/current"
+  - id: "new-scientist"
+    name: "New Scientist"
+    rss_url: "https://www.newscientist.com/feed/home/"
+
+  # ===== Reddit (multireddit — 1 request tránh rate-limit, hot across subs) =====
+  - id: "reddit-tech"
+    name: "Reddit Tech"
+    rss_url: "https://www.reddit.com/r/MachineLearning+LocalLLaMA+artificial+OpenAI+ChatGPT+ClaudeAI+singularity+programming+Python+golang+rust+netsec+cybersecurity+devops+technology/hot/.rss?limit=50"

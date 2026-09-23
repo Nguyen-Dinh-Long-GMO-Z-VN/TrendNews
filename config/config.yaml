@@ -85,6 +85,33 @@ investment_analysis:
   min_news_threshold: 3  # số tin tức tối thiểu để kích hoạt phân tích một nhóm tài sản
   cache_hours: 6         # thời gian cache kết quả phân tích (giờ)
 
+# Dịch tiêu đề sang tiếng Việt bằng AI (mặc định Gemini, cấu hình qua TRANSLATE_* env)
+translation:
+  enabled: false         # bật để dịch tất cả tin crawl sang tiếng Việt
+  language: Vietnamese
+  batch_size: 50         # số title mỗi request
+  batch_delay: 2.0       # giãn cách giữa các batch (giây) — free tier Gemini ~15 RPM
+  max_retries: 2
+  cache_file: data/translation_cache.json
+
+# Gộp tin trùng xuyên nguồn (cùng sự kiện trên nhiều platform)
+dedup:
+  enabled: true
+  similarity_threshold: 0.88   # 0.85–0.92 hợp lý; cao hơn = bảo thủ hơn
+
+# Lọc tin theo mô tả sở thích tự nhiên (config/ai_interests.txt)
+ai_filter:
+  enabled: false
+  mode: prefilter        # prefilter: lọc trước rồi keyword groups tổ chức report
+                         # replace: AI thay hẳn keyword groups
+  interests_file: config/ai_interests.txt
+  batch_size: 30
+  batch_delay: 4.0       # free tier Gemini ~15 RPM — delay thấp sẽ dính 429
+  max_retries: 2
+  min_score: 0.5
+  criteria_cache_file: data/ai_criteria_cache.json
+  debug: false
+
 # name 可以定义任意名称，只具有显示作用，即使项目运行了几天后，忽然改掉 name 也不会影响代码的正常运行
 platforms:
   - id: "toutiao"

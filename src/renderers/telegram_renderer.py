@@ -13,7 +13,7 @@ class TelegramRenderer:
         )
 
         link_url = title_data["mobile_url"] or title_data["url"]
-        cleaned_title = clean_title(title_data["title"])
+        cleaned_title = clean_title(title_data.get("title_vi") or title_data["title"])
 
         if link_url:
             formatted_title = f'<a href="{link_url}">{html_escape(cleaned_title)}</a>'
@@ -22,8 +22,12 @@ class TelegramRenderer:
 
         title_prefix = "🆕 " if title_data.get("is_new") else ""
 
+        source_label = title_data["source_name"]
+        if title_data.get("source_count", 1) > 1:
+            source_label += f" +{title_data['source_count'] - 1}"
+
         if show_source:
-            result = f"[{title_data['source_name']}] {title_prefix}{formatted_title}"
+            result = f"[{source_label}] {title_prefix}{formatted_title}"
         else:
             result = f"{title_prefix}{formatted_title}"
 
