@@ -1,332 +1,101 @@
-<img width="621" height="888" alt="Screenshot from 2025-11-25 08-29-27" src="https://github.com/user-attachments/assets/43bb2f53-8e60-4112-bc5f-61c9bb62e909" />
+# TrendRadar 📡
 
+TrendRadar thu thập tin nóng và RSS, lọc theo chủ đề quan tâm, rồi tạo báo cáo HTML để đọc hoặc gửi qua Telegram và email. Cấu hình hiện tại khai báo **179 nguồn**: 20 bảng tin qua NewsNow và 159 RSS từ Việt Nam cùng nhiều khu vực khác.
 
-# Phiên bản refactor của TrendRadar 📡
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-green.svg)](LICENSE)
 
-> Công cụ phân tích xu hướng tin tức từ nhiều nền tảng truyền thông Trung Quốc với kiến trúc modular.
+## Có gì trong dự án?
 
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+- Thu thập song song từ [NewsNow](https://newsnow.busiyi.world/) và các RSS được khai báo trong [`config/config.yaml`](config/config.yaml). Nguồn RSS gồm báo Việt Nam, tin thế giới, AI, quốc phòng, tài chính và khoa học.
+- Theo dõi từ khóa trong [`config/frequency_words.txt`](config/frequency_words.txt), đánh dấu tin mới, ưu tiên tin xuất hiện trên nhiều nguồn và có thứ hạng cao; gộp tiêu đề trùng giữa các nguồn.
+- Tạo báo cáo HTML theo ba chế độ `daily`, `incremental` và `current`; lưu dữ liệu thô cùng báo cáo trong `output/`.
+- Tùy chọn lọc tin bằng mô tả sở thích tự nhiên, dịch tiêu đề sang tiếng Việt và phân tích tin theo nhóm tài sản bằng AI. Các tính năng này cần cấu hình nhà cung cấp AI; riêng dịch và lọc AI mặc định tắt.
+- Cung cấp MCP server để truy vấn tin mới, tìm kiếm tin cũ và phân tích xu hướng từ dữ liệu đã lưu.
 
-## ✨ Tính Năng
+## Chạy nhanh
 
-- 🌐 **Thu thập từ 11+ nền tảng**: Weibo, Douyin, Baidu, Zhihu, Bilibili, v.v.
-- 🔍 **Phân tích từ khóa thông minh**: Theo dõi xu hướng theo từ khóa tùy chỉnh
-- 📊 **Báo cáo HTML đẹp mắt**: Giao diện hiện đại, responsive
-- 📨 **Đa kênh thông báo**: Telegram, Email và nhiều hơn nữa
-- 🔄 **3 chế độ hoạt động**: Daily, Incremental, Current
-- 🏗️ **Kiến trúc modular**: Code sạch, dễ bảo trì và mở rộng
-- 🐳 **Docker support**: Triển khai dễ dàng
-- 🔒 **Proxy support**: Bảo mật và ổn định
-
-## 🚀 Cài Đặt Nhanh
-
-### Yêu Cầu
-
-- Python 3.8+
-- pip
-
-### Cài Đặt Dependencies
+Yêu cầu Python **3.10+** và kết nối mạng để lấy tin. Chạy từ thư mục gốc dự án:
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+python main.py
 ```
 
-## ⚙️ Cấu Hình
+File `config/config.yaml` và `config/frequency_words.txt` đã có sẵn. Chương trình ghi báo cáo HTML và bản tin thô vào `output/<ngày>/html/` và `output/<ngày>/txt/`; khi chạy trên máy cá nhân, nó sẽ mở báo cáo trong trình duyệt.
 
-### 1. Tạo File Cấu Hình
+### Cấu hình cơ bản
 
-```bash
-cp config/config.yaml.example config/config.yaml
-```
-
-### 2. Chỉnh Sửa Cấu Hình
-
-Mở `config/config.yaml` và điều chỉnh:
+Chỉnh trực tiếp [`config/config.yaml`](config/config.yaml). Cấu trúc các mục chính:
 
 ```yaml
-# Chế độ báo cáo
-report_mode: daily  # daily | incremental | current
+report:
+  mode: daily                 # daily | incremental | current
 
-# Cấu hình Telegram (tùy chọn)
-telegram_bot_token: "YOUR_BOT_TOKEN"
-telegram_chat_id: "YOUR_CHAT_ID"
+notification:
+  enable_notification: false # bật true sau khi cấu hình kênh gửi
 
-# Cấu hình Email (tùy chọn)
-email_from: "your-email@gmail.com"
-email_password: "your-app-password"
-email_to: "recipient@example.com"
+translation:
+  enabled: false
 
-# Platforms cần theo dõi
+dedup:
+  enabled: true
+
+ai_filter:
+  enabled: false
+
 platforms:
   - id: weibo
     name: 微博
-  - id: douyin
-    name: 抖音
-  # ... thêm platforms khác
+  - id: vnexpress
+    name: VnExpress
+    rss_url: https://vnexpress.net/rss/tin-moi-nhat.rss
 ```
 
-### 3. Cấu Hình Từ Khóa
+Mỗi dòng trong [`config/frequency_words.txt`](config/frequency_words.txt) là một từ khóa cần theo dõi. Có thể chọn file cấu hình khác bằng biến môi trường `CONFIG_PATH`.
 
-Chỉnh sửa `config/frequency_words.txt` để thêm từ khóa bạn muốn theo dõi:
+| Chế độ | Nội dung báo cáo |
+| --- | --- |
+| `daily` | Tổng hợp các tin khớp từ đầu ngày |
+| `incremental` | Tập trung vào tin mới xuất hiện |
+| `current` | Tin khớp từ bảng xếp hạng hiện tại |
 
-```
-AI
-ChatGPT
-Machine Learning
-# Mỗi từ khóa một dòng
-```
+### AI và thông báo
 
-## 🎯 Sử Dụng
+Sao chép [`.env.example`](.env.example) thành `.env` rồi điền khóa API nếu dùng AI. `src/analysis/ai_client.py` hỗ trợ Claude, OpenAI, DeepSeek, Gemini và Ollama; từng tính năng có thể chọn nhà cung cấp riêng qua các biến `AI_*`, `TRANSLATE_*` và `AIFILTER_*`.
 
-### Chạy Chương Trình
+- Dịch tiêu đề: đặt `translation.enabled: true` hoặc `TRANSLATION_ENABLED=true`.
+- Lọc theo sở thích: sửa [`config/ai_interests.txt`](config/ai_interests.txt), rồi đặt `ai_filter.enabled: true` hoặc `AI_FILTER_ENABLED=true`.
+- Phân tích nhóm tài sản: `investment_analysis.enabled` đang bật trong cấu hình; cần một nhà cung cấp AI được cấu hình để có kết quả phân tích.
+- Gửi thông báo: đặt `notification.enable_notification: true`, rồi khai báo `TELEGRAM_BOT_TOKEN` và `TELEGRAM_CHAT_ID`, hoặc `EMAIL_FROM`, `EMAIL_PASSWORD` và `EMAIL_TO` trong môi trường. Không commit khóa API hay thông tin đăng nhập vào repo.
+
+## MCP server
+
+Sau khi cài dependencies, có thể chạy server để trợ lý AI truy vấn dữ liệu đã thu thập:
 
 ```bash
-python3 main.py
+python -m mcp_server.server                   # stdio
+python -m mcp_server.server --transport http --host 127.0.0.1 --port 3333
 ```
 
-### Các Chế Độ Hoạt Động
+Chế độ HTTP dùng endpoint `http://127.0.0.1:3333/mcp`. Các công cụ gồm lấy tin mới, tin theo ngày, chủ đề nổi bật, tìm kiếm lịch sử, phân tích và kích hoạt lượt thu thập mới. MCP đọc dữ liệu trong `output/`, nên hãy chạy `python main.py` ít nhất một lần trước khi truy vấn.
 
-| Chế độ | Mô tả | Sử dụng khi |
-|--------|-------|-------------|
-| **daily** | Tổng hợp tất cả tin tức trong ngày | Muốn xem toàn bộ xu hướng |
-| **incremental** | Chỉ tin tức mới xuất hiện | Theo dõi real-time |
-| **current** | Bảng xếp hạng hiện tại | Xem trending hiện tại |
+## Cấu trúc chính
 
-Cấu hình trong `config/config.yaml`:
-```yaml
-report_mode: daily  # hoặc incremental, current
-```
+| Đường dẫn | Vai trò |
+| --- | --- |
+| [`main.py`](main.py) | Điều phối thu thập, xử lý, tạo báo cáo và gửi thông báo |
+| [`src/core/`](src/core/) | Lấy dữ liệu từ NewsNow và RSS, quản lý lịch sử gửi |
+| [`src/processors/`](src/processors/) | Lọc từ khóa, thống kê, nhận diện tin mới và gộp tin trùng |
+| [`src/analysis/`](src/analysis/) | AI client, dịch, lọc theo sở thích và phân tích nhóm tài sản |
+| [`src/renderers/`](src/renderers/) | Tạo báo cáo HTML và nội dung Telegram |
+| [`src/notifiers/`](src/notifiers/) | Gửi Telegram và email |
+| [`mcp_server/`](mcp_server/) | MCP tools truy vấn dữ liệu đã lưu |
 
-## 📁 Cấu Trúc Project
+Workflow [`.github/workflows/crawler.yml`](.github/workflows/crawler.yml) chạy crawler mỗi giờ trên GitHub Actions. Thư mục `docker/` chứa cấu hình container, nhưng `docker/Dockerfile` hiện chưa chép thư mục `src/` vào image; vì vậy hướng dẫn chạy nhanh ở trên dùng Python trực tiếp.
 
-```
-TrendRadar/
-├── config/                      # 📝 Cấu hình
-│   ├── config.yaml             # Cấu hình chính
-│   └── frequency_words.txt     # Từ khóa theo dõi
-│
-├── src/                        # 💻 Source Code (Modular Architecture)
-│   ├── config/                 # Quản lý cấu hình
-│   │   ├── __init__.py
-│   │   ├── config_loader.py    # Load YAML config
-│   │   └── smtp_config.py      # SMTP settings
-│   │
-│   ├── core/                   # Thành phần cốt lõi
-│   │   ├── __init__.py
-│   │   ├── data_fetcher.py     # Thu thập dữ liệu
-│   │   └── push_manager.py     # Quản lý push notification
-│   │
-│   ├── processors/             # Xử lý dữ liệu
-│   │   ├── __init__.py
-│   │   ├── data_processor.py   # Xử lý dữ liệu thô
-│   │   ├── statistics.py       # Thống kê và phân tích
-│   │   ├── frequency_words.py  # Xử lý từ khóa
-│   │   └── report_processor.py # Chuẩn bị dữ liệu báo cáo
-│   │
-│   ├── renderers/              # Render báo cáo
-│   │   ├── __init__.py
-│   │   ├── html_renderer.py    # Render HTML reports
-│   │   └── telegram_renderer.py # Format cho Telegram
-│   │
-│   ├── notifiers/              # Gửi thông báo
-│   │   ├── __init__.py
-│   │   ├── manager.py          # Quản lý notifications
-│   │   ├── telegram.py         # Telegram notifier
-│   │   └── email.py            # Email notifier
-│   │
-│   └── utils/                  # Tiện ích
-│       ├── __init__.py
-│       ├── time_utils.py       # Xử lý thời gian
-│       ├── text_utils.py       # Xử lý text
-│       ├── file_utils.py       # Xử lý file
-│       ├── format_utils.py     # Format dữ liệu
-│       ├── message_utils.py    # Xử lý message
-│       └── version_check.py    # Kiểm tra version
-│
-├── output/                     # 📊 Kết quả
-│   └── YYYY年MM月DD日/
-│       ├── html/               # Báo cáo HTML
-│       └── txt/                # Dữ liệu thô
-│
-├── main.py                     # 🚀 Entry point
-├── requirements.txt            # 📦 Dependencies
-├── README.md                   # 📖 Documentation
-└── REFACTOR_PLAN.md           # 🗺️ Refactoring plan
-```
+## Giấy phép
 
-## 🏗️ Kiến Trúc Modular
-
-### Nguyên Tắc Thiết Kế
-
-1. **Separation of Concerns**: Mỗi module có trách nhiệm rõ ràng
-2. **Single Responsibility**: Mỗi class/function làm một việc duy nhất
-3. **Dependency Injection**: Dễ dàng test và mở rộng
-4. **Clean Code**: Code dễ đọc, dễ bảo trì
-
-### Luồng Hoạt Động
-
-```
-┌─────────────┐
-│   main.py   │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────────────────┐
-│      NewsAnalyzer (main.py)         │
-│  - Điều phối toàn bộ workflow       │
-└──────┬──────────────────────────────┘
-       │
-       ├──► DataFetcher (core/)
-       │    └─ Thu thập dữ liệu từ platforms
-       │
-       ├──► Processors (processors/)
-       │    ├─ Xử lý dữ liệu thô
-       │    ├─ Phân tích thống kê
-       │    └─ Chuẩn bị báo cáo
-       │
-       ├──► Renderers (renderers/)
-       │    ├─ HTMLRenderer: Tạo báo cáo HTML
-       │    └─ TelegramRenderer: Format cho Telegram
-       │
-       └──► Notifiers (notifiers/)
-            ├─ TelegramNotifier: Gửi Telegram
-            └─ EmailNotifier: Gửi Email
-```
-
-## 📊 Platforms Hỗ Trợ
-
-| Platform | ID | Mô tả |
-|----------|-------|-------|
-| 今日头条 | `toutiao` | Toutiao News |
-| 百度热搜 | `baidu` | Baidu Hot Search |
-| 华尔街见闻 | `wallstreetcn-hot` | Wallstreetcn |
-| 澎湃新闻 | `thepaper` | The Paper |
-| bilibili | `bilibili-hot-search` | Bilibili Hot |
-| 财联社 | `cls-hot` | CLS Hot |
-| 凤凰网 | `ifeng` | Ifeng News |
-| 贴吧 | `tieba` | Tieba |
-| 微博 | `weibo` | Weibo |
-| 抖音 | `douyin` | Douyin |
-| 知乎 | `zhihu` | Zhihu |
-
-## 🔔 Kênh Thông Báo
-
-### Telegram
-
-```yaml
-telegram_bot_token: "YOUR_BOT_TOKEN"
-telegram_chat_id: "YOUR_CHAT_ID"
-```
-
-### Email
-
-```yaml
-email_from: "your-email@gmail.com"
-email_password: "your-app-password"
-email_to: "recipient@example.com"
-```
-
-Hỗ trợ các SMTP providers:
-- Gmail
-- Outlook
-- QQ Mail
-- 163 Mail
-- Custom SMTP
-
-## 🐳 Docker
-
-```bash
-# Build image
-docker build -t trendradar .
-
-# Run container
-docker run -d \
-  -v $(pwd)/config:/app/config \
-  -v $(pwd)/output:/app/output \
-  trendradar
-```
-
-## 🛠️ Development
-
-### Cấu Trúc Code
-
-- **config/**: Quản lý cấu hình YAML và SMTP
-- **core/**: Components cốt lõi (DataFetcher, PushManager)
-- **processors/**: Xử lý và phân tích dữ liệu
-- **renderers/**: Render báo cáo (HTML, Telegram)
-- **notifiers/**: Gửi thông báo đa kênh
-- **utils/**: Các hàm tiện ích
-
-### Best Practices
-
-1. Tuân thủ PEP 8
-2. Viết docstrings cho functions/classes
-3. Sử dụng type hints
-4. Tách biệt concerns
-5. Viết code dễ test
-
-Xem thêm trong `CLAUDE.md` và `src/README.md`
-
-## 📈 Ví Dụ Output
-
-### Báo cáo HTML
-
-![HTML Report Example](_image/html-report.png)
-
-### Telegram Notification
-
-```
-📊 Thống kê từ khóa nóng
-
-🔥 [1/5] AI : 15 tin
-
-  1. [微博] ChatGPT phát hành tính năng mới [3] - 10:30
-  2. [知乎] AI sẽ thay thế lập trình viên? [5-8] - 11:20
-  ...
-```
-
-## 🔧 Troubleshooting
-
-### Lỗi kết nối
-
-```bash
-# Kiểm tra proxy
-USE_PROXY: true
-DEFAULT_PROXY: "http://127.0.0.1:7890"
-```
-
-### Lỗi SMTP
-
-```bash
-# Sử dụng App Password cho Gmail
-# Không dùng mật khẩu thường
-```
-
-## 📝 License
-
-MIT License - xem [LICENSE](LICENSE) để biết thêm chi tiết.
-
-## 🤝 Contributing
-
-Contributions are welcome! 
-
-1. Fork repo
-2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Mở Pull Request
-
-## 📧 Contact
-
-- Issues: [GitHub Issues](https://github.com/sansan0/TrendRadar/issues)
-- Discussions: [GitHub Discussions](https://github.com/sansan0/TrendRadar/discussions)
-
-## 🙏 Acknowledgments
-
-- Cảm ơn tất cả contributors
-- Inspired by các công cụ phân tích xu hướng
-
----
-
-Made with ❤️ by TrendRadar Team
+Repo đi kèm văn bản [GNU GPL phiên bản 3](LICENSE).
