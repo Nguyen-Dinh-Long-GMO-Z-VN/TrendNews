@@ -2,8 +2,7 @@ name: Hot News Crawler
 
 on:
   schedule:
-    # 我们使用的是 github 官方提供的资源来进行的推送，而每个账号的资源是限额的，为了不被官方判定为滥用而面临封号的风险，不建议比半小时更低
-    - cron: "0 * * * *" # 每小时整点运行一次(实际有偏差) 或者 "*/30 * * * *" (每半小时执行一次) 或者 "*/30 0-14 * * *"(每天早上 8 点到晚上 10 点期间，每半小时运行一次)
+    - cron: "0 1 * * *" # 每天 08:00 越南时间 (UTC+7)
   workflow_dispatch:
 
 # 添加权限设置
@@ -13,6 +12,13 @@ permissions:
 jobs:
   crawl:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
@@ -71,3 +77,20 @@ jobs:
           git config --global user.email 'actions@github.com'
           git add -A
           git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update by GitHub Actions at $(TZ=Asia/Shanghai date)" && git push)
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Stage report for publishing
+        run: |
+          mkdir -p "$RUNNER_TEMP/trendnews-pages"
+          cp index.html "$RUNNER_TEMP/trendnews-pages/index.html"
+
+      - name: Upload report artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/trendnews-pages
+
+      - name: Deploy report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

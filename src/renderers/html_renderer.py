@@ -34,7 +34,7 @@ REPORT_CSS = """
             --danger-soft: #fef3f2;
             --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
             --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-            --display: "Space Grotesk", "IBM Plex Sans", sans-serif;
+            --display: "IBM Plex Sans", "Segoe UI", sans-serif;
         }
 
         * { box-sizing: border-box; }
@@ -90,7 +90,7 @@ REPORT_CSS = """
             color: var(--text);
             border-radius: 8px;
             padding: 8px 14px;
-            font-size: 13px;
+            font-size: 14px;
             font-family: var(--sans);
             outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -102,29 +102,29 @@ REPORT_CSS = """
             box-shadow: 0 0 0 3px var(--accent-soft);
         }
 
-        .save-buttons { display: flex; gap: 8px; flex-shrink: 0; }
+        .export-tools { display: flex; flex-shrink: 0; }
 
-        .save-btn {
+        .export-btn {
             font-family: var(--sans);
-            font-size: 12px;
-            font-weight: 500;
-            padding: 8px 14px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-2);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            color: #fffaf0;
             border-radius: 8px;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.15s ease;
         }
 
-        .save-btn:hover {
+        .export-btn:hover {
             border-color: var(--accent);
-            color: var(--accent-deep);
+            background: var(--accent-deep);
+            color: #fffaf0;
         }
 
-        .save-btn:active { transform: translateY(1px); }
-        .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .export-btn:active { transform: translateY(1px); }
 
         /* ── masthead ───────────────────────────── */
         .header { padding: 44px 4px 26px; }
@@ -638,7 +638,360 @@ REPORT_CSS = """
             .toc { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 14px; }
             .toc a { flex-shrink: 0; }
             .news-title { padding-right: 46px; }
-            .save-buttons { margin-left: auto; }
+            .export-tools { margin-left: auto; }
+        }
+
+        /* ── TrendNews editorial paper / petrol treatment ── */
+        :root {
+            --bg: #0b3833;
+            --surface: #fcf8ef;
+            --hover: #f4ecdc;
+            --border: #d8c49e;
+            --border-soft: #e8dcc5;
+            --text: #132f2d;
+            --text-2: #485751;
+            --text-3: #626d66;
+            --accent: #ad7629;
+            --accent-deep: #895614;
+            --accent-soft: #f6e8d2;
+            --blue: #247095;
+            --blue-soft: #e5f0f2;
+            --green: #39765b;
+            --green-soft: #e8f0e7;
+            --teal: #247b86;
+            --teal-soft: #e2eff0;
+            --display: "IBM Plex Sans", "Segoe UI", sans-serif;
+        }
+
+        html { background: var(--bg); }
+        body {
+            padding: 0 18px 48px;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: auto;
+        }
+
+        .container {
+            max-width: 890px;
+            margin: 8px auto 36px;
+            padding: 0 28px 24px;
+            background: var(--surface);
+            border: 1px solid #cba965;
+            border-radius: 11px;
+            box-shadow: 0 18px 60px rgba(0, 19, 16, 0.24);
+        }
+
+        .topbar {
+            top: 8px;
+            margin: 0 -28px;
+            padding: 12px 20px;
+            gap: 14px;
+            background: rgba(252, 248, 239, 0.97);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        .brand { color: var(--text); font-size: 13px; letter-spacing: 0.15em; }
+        .brand-mark { color: var(--accent); }
+
+        .search {
+            max-width: 320px;
+            padding-left: 38px;
+            font-size: 15px;
+            background: #fbf8f1;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2353605a' stroke-width='1.8'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+            border-color: var(--border);
+            border-radius: 8px;
+            color: var(--text);
+        }
+        .search:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(173, 118, 41, 0.12);
+        }
+
+        .export-btn {
+            padding: 8px 16px;
+            color: #fffaf0;
+            background: var(--accent);
+            border-color: var(--accent);
+            border-radius: 8px;
+            font-family: var(--display);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .export-btn:hover { color: #fffaf0; background: var(--accent-deep); border-color: var(--accent-deep); }
+
+        .header { padding: 33px 0 22px; }
+        .header-eyebrow {
+            margin: 0 0 10px;
+            color: var(--accent-deep);
+            font-size: 12px;
+            letter-spacing: 0.12em;
+        }
+        .header-main {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 204px;
+            align-items: start;
+            gap: 20px;
+        }
+        .header-title {
+            margin: 0;
+            color: #0e302d;
+            font-family: var(--display);
+            font-size: clamp(46px, 6vw, 66px);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1.08;
+        }
+        .header-info { gap: 9px; margin-top: 16px; }
+        .info-item {
+            gap: 8px;
+            padding: 6px 13px;
+            color: var(--text);
+            background: transparent;
+            border-color: var(--border);
+        }
+        .info-label { color: var(--text-2); font-size: 13px; }
+        .info-value {
+            color: var(--accent-deep);
+            font-family: var(--display);
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .radar-block { width: 204px; justify-self: end; margin-top: -13px; }
+        .topic-radar { display: block; width: 100%; height: auto; overflow: visible; }
+        .radar-grid { fill: none; stroke: #bb8b46; stroke-width: 0.8; opacity: 0.8; }
+        .radar-axis { stroke: #d4bd94; stroke-width: 0.8; }
+        .radar-shape { fill: rgba(173, 118, 41, 0.25); stroke: #a56d22; stroke-width: 1.25; }
+        .radar-point { fill: #a56d22; stroke: #fcf8ef; stroke-width: 0.7; }
+        .radar-label { fill: #193834; font: 600 12px "IBM Plex Sans", sans-serif; }
+
+        .toc { gap: 8px; padding: 0 0 20px; }
+        .toc a {
+            padding: 6px 8px;
+            color: var(--text);
+            background: transparent;
+            border-color: var(--border);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .toc a b { color: var(--accent); font-size: 12.5px; }
+        .toc a:hover { color: var(--accent-deep); background: var(--accent-soft); }
+
+        .content {
+            padding-top: 23px;
+            border-top: 1px solid #cda765;
+        }
+        .content > * { scroll-margin-top: 70px; }
+        .word-group, .top-picks, .new-section {
+            margin: 0 0 26px;
+            padding: 0;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .top-picks { margin-bottom: 26px; }
+        .top-picks-title, .new-section-title {
+            margin: 0 0 5px;
+            color: var(--accent-deep);
+            font-family: var(--mono);
+            font-size: 13px;
+            letter-spacing: 0.16em;
+        }
+        .top-pick-item {
+            gap: 20px;
+            padding: 9px 6px 11px;
+            border-bottom: 1px solid var(--border-soft);
+            border-radius: 0;
+        }
+        .top-pick-item:hover { background: rgba(173, 118, 41, 0.055); }
+        .top-pick-num {
+            min-width: 36px;
+            padding-top: 2px;
+            color: var(--accent-deep);
+            font-family: var(--mono);
+            font-size: 15px;
+        }
+        .top-pick-title {
+            margin: 0 0 2px;
+            color: var(--text);
+            font-family: var(--display);
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.45;
+            letter-spacing: -0.005em;
+        }
+        .top-pick-meta { gap: 8px; }
+        .top-pick-source { color: var(--text-2); font-size: 13px; font-weight: 500; }
+        .tp-chip { font-size: 12px; padding: 2px 8px; border-radius: 5px; }
+        .tp-chip-src { color: #236786; background: #e7f1f4; }
+        .tp-chip-ai { color: #1b7381; background: #e1eff1; }
+        .tp-chip-rank { color: #a64e19; background: #f8e7d5; }
+
+        .word-group { margin: 0 0 24px; }
+        .word-header {
+            margin-bottom: 3px;
+            padding: 11px 5px 10px;
+            border-top: 1px solid var(--border-soft);
+            border-bottom: 0;
+        }
+        .word-info { gap: 9px; }
+        .word-num {
+            min-width: 24px;
+            height: auto;
+            padding: 0;
+            color: var(--accent-deep);
+            background: transparent;
+            font-size: 13px;
+        }
+        .word-name {
+            color: var(--text);
+            font-family: var(--display);
+            font-size: 22px;
+        }
+        .word-count, .word-index { color: var(--text-3); font-size: 13px; }
+        .news-item {
+            padding: 9px 6px;
+            border-bottom-color: var(--border-soft);
+            border-radius: 0;
+        }
+        .news-item:hover, .new-item:hover { background: rgba(173, 118, 41, 0.05); }
+        .news-title {
+            margin-bottom: 4px;
+            color: var(--text);
+            font-family: var(--display);
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .news-title-orig { color: var(--text-3); font-family: var(--sans); font-size: 14px; }
+        .news-header { gap: 7px; }
+        .source-name { color: var(--text-2); font-size: 13px; font-weight: 500; }
+        .rank-num, .new-item-rank { color: var(--text-2); background: #eee9de; }
+        .rank-num.top, .new-item-rank.top { color: #fffaf0; background: var(--accent); }
+        .rank-num.high, .new-item-rank.high { color: var(--accent-deep); background: var(--accent-soft); }
+        .source-count, .ai-score { padding: 2px 8px; border-radius: 5px; font-size: 12px; }
+        .news-link { color: var(--text); }
+        .news-link:visited { color: #53605a; }
+
+        .new-section { padding-top: 16px; border-top: 1px solid var(--border); }
+        .new-source-title { color: var(--text-2); border-bottom-color: var(--border-soft); font-size: 14px; }
+        .new-item { padding: 8px 6px; border-bottom-color: var(--border-soft); border-radius: 0; }
+        .new-item-number { color: var(--accent); }
+        .new-item-title { color: var(--text); font-family: var(--display); font-size: 18px; }
+        .error-section { background: #f9efdf; border-color: #e5cda8; border-radius: 6px; }
+        .footer { margin-top: 24px; border-top: 1px solid var(--border); }
+        .footer-content { color: var(--text-3); }
+        .footer-link { color: var(--text-2); border-color: var(--border); }
+        .no-results { color: var(--text-2); }
+
+        body .ia-section {
+            margin: 0 0 24px;
+            padding: 16px 0;
+            background: transparent;
+            border: 0;
+            border-top: 1px solid var(--border);
+            border-radius: 0;
+            box-shadow: none;
+        }
+        body .ia-section-title { color: var(--text); border-color: var(--border); }
+        body .ia-card { border-radius: 6px; box-shadow: none; }
+
+        @media (max-width: 720px) {
+            .container { max-width: 640px; padding-right: 22px; padding-left: 22px; }
+            .topbar { margin-right: -22px; margin-left: -22px; padding-right: 20px; padding-left: 20px; }
+            .header-main { grid-template-columns: minmax(0, 1fr) 170px; gap: 10px; }
+            .radar-block { width: 170px; }
+            .header-title { font-size: clamp(42px, 7.5vw, 58px); }
+        }
+
+        @media (max-width: 560px) {
+            body { padding: 0 10px 28px; }
+            .container {
+                margin: 0 auto 24px;
+                padding: 0 16px 20px;
+                border-top: 0;
+                border-radius: 0 0 8px 8px;
+            }
+            .topbar {
+                top: 0;
+                margin: 0 -16px;
+                padding: 10px 14px;
+                gap: 8px;
+            }
+            .brand { font-size: 11px; letter-spacing: 0.1em; }
+            .export-tools { margin-left: auto; }
+            .export-btn { padding: 8px 10px; font-size: 13px; }
+            .search { order: 3; flex-basis: 100%; max-width: none; margin-left: 0; }
+            .header { padding: 23px 0 18px; }
+            .header-main { grid-template-columns: minmax(0, 1fr); gap: 0; }
+            .header-title { width: 100%; font-size: clamp(37px, 9.5vw, 44px); white-space: nowrap; }
+            .radar-block { width: 150px; margin: -2px 8px -8px 0; }
+            .radar-label { font-size: 14px; }
+            .header-info { flex-wrap: nowrap; gap: 6px; margin-top: 12px; }
+            .info-item { gap: 5px; padding: 5px 9px; }
+            .info-label { font-size: 12px; }
+            .info-value { font-size: 17px; }
+            .toc { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 15px; }
+            .toc a { flex-shrink: 0; }
+            .top-pick-item { gap: 13px; padding-right: 0; padding-left: 0; }
+            .top-pick-num { min-width: 27px; }
+            .top-pick-title { font-size: 17px; }
+            .news-title { font-size: 17px; }
+            .news-title { padding-right: 46px; }
+            .news-item.new .news-title { padding-right: 54px; }
+            .word-group, .top-picks, .new-section { padding: 0; }
+        }
+
+        @page { size: A4; margin: 14mm 13mm; }
+        @media print {
+            html, body {
+                background: #fff !important;
+                color: #132f2d !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            .container {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                border: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .topbar {
+                position: static;
+                margin: 0;
+                padding: 0 0 8mm;
+                background: transparent;
+                border-bottom: 1px solid #d8c49e;
+            }
+            .search, .export-tools { display: none !important; }
+            .header { padding: 7mm 0 5mm; }
+            .header-main { grid-template-columns: minmax(0, 1fr) 42mm; gap: 5mm; }
+            .header-title { font-size: 34pt; }
+            .header-eyebrow { font-size: 8pt; }
+            .info-item, .toc a { background: transparent !important; }
+            .radar-block { width: 42mm; margin-top: -3mm; }
+            .radar-label { fill: #193834 !important; }
+            .toc { padding-bottom: 4mm; }
+            .content { padding-top: 5mm; }
+            .top-picks, .word-group, .new-section, .ia-section { box-shadow: none !important; }
+            .top-pick-item, .news-item, .new-item, .word-header { break-inside: avoid; }
+            .word-header { break-after: avoid; }
+            .top-pick-title, .news-title, .new-item-title { color: #132f2d !important; }
+            .top-picks-title, .new-section-title { break-after: avoid; }
+            a, a:visited { color: #132f2d !important; text-decoration: none; }
+            .footer { break-inside: avoid; }
         }
 """
 
@@ -708,278 +1061,9 @@ REPORT_JS = """
                 });
             })();
 
-            // ── lưu ảnh (html2canvas) ──
-            async function saveAsImage() {
-                const button = event.target;
-                const originalText = button.textContent;
-
-                try {
-                    button.textContent = 'Đang tạo...';
-                    button.disabled = true;
-                    window.scrollTo(0, 0);
-
-                    await new Promise(resolve => setTimeout(resolve, 200));
-
-                    const buttons = document.querySelector('.save-buttons');
-                    buttons.style.visibility = 'hidden';
-
-                    await new Promise(resolve => setTimeout(resolve, 100));
-
-                    const container = document.querySelector('.container');
-
-                    const canvas = await html2canvas(container, {
-                        backgroundColor: '#f2f4f7',
-                        scale: 1.5,
-                        useCORS: true,
-                        allowTaint: false,
-                        imageTimeout: 10000,
-                        removeContainer: false,
-                        foreignObjectRendering: false,
-                        logging: false,
-                        width: container.offsetWidth,
-                        height: container.offsetHeight,
-                        x: 0,
-                        y: 0,
-                        scrollX: 0,
-                        scrollY: 0,
-                        windowWidth: window.innerWidth,
-                        windowHeight: window.innerHeight
-                    });
-
-                    buttons.style.visibility = 'visible';
-
-                    const link = document.createElement('a');
-                    const now = new Date();
-                    const filename = `TrendNews_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.png`;
-
-                    link.download = filename;
-                    link.href = canvas.toDataURL('image/png', 1.0);
-
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    button.textContent = 'Đã lưu';
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    }, 2000);
-
-                } catch (error) {
-                    const buttons = document.querySelector('.save-buttons');
-                    buttons.style.visibility = 'visible';
-                    button.textContent = 'Lưu thất bại';
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    }, 2000);
-                }
-            }
-
-            async function saveAsMultipleImages() {
-                const button = event.target;
-                const originalText = button.textContent;
-                const container = document.querySelector('.container');
-                const scale = 1.5;
-                const maxHeight = 5000 / scale;
-
-                try {
-                    button.textContent = 'Đang phân tích...';
-                    button.disabled = true;
-
-                    const newsItems = Array.from(container.querySelectorAll('.news-item'));
-                    const wordGroups = Array.from(container.querySelectorAll('.word-group'));
-                    const newSection = container.querySelector('.new-section');
-                    const errorSection = container.querySelector('.error-section');
-                    const header = container.querySelector('.header');
-                    const footer = container.querySelector('.footer');
-
-                    const containerRect = container.getBoundingClientRect();
-                    const elements = [];
-
-                    elements.push({
-                        type: 'header',
-                        element: header,
-                        top: 0,
-                        bottom: header.offsetHeight,
-                        height: header.offsetHeight
-                    });
-
-                    if (errorSection) {
-                        const rect = errorSection.getBoundingClientRect();
-                        elements.push({
-                            type: 'error',
-                            element: errorSection,
-                            top: rect.top - containerRect.top,
-                            bottom: rect.bottom - containerRect.top,
-                            height: rect.height
-                        });
-                    }
-
-                    wordGroups.forEach(group => {
-                        const groupRect = group.getBoundingClientRect();
-                        const groupNewsItems = group.querySelectorAll('.news-item');
-
-                        const wordHeader = group.querySelector('.word-header');
-                        if (wordHeader) {
-                            const headerRect = wordHeader.getBoundingClientRect();
-                            elements.push({
-                                type: 'word-header',
-                                element: wordHeader,
-                                parent: group,
-                                top: groupRect.top - containerRect.top,
-                                bottom: headerRect.bottom - containerRect.top,
-                                height: headerRect.height
-                            });
-                        }
-
-                        groupNewsItems.forEach(item => {
-                            const rect = item.getBoundingClientRect();
-                            elements.push({
-                                type: 'news-item',
-                                element: item,
-                                parent: group,
-                                top: rect.top - containerRect.top,
-                                bottom: rect.bottom - containerRect.top,
-                                height: rect.height
-                            });
-                        });
-                    });
-
-                    if (newSection) {
-                        const rect = newSection.getBoundingClientRect();
-                        elements.push({
-                            type: 'new-section',
-                            element: newSection,
-                            top: rect.top - containerRect.top,
-                            bottom: rect.bottom - containerRect.top,
-                            height: rect.height
-                        });
-                    }
-
-                    const footerRect = footer.getBoundingClientRect();
-                    elements.push({
-                        type: 'footer',
-                        element: footer,
-                        top: footerRect.top - containerRect.top,
-                        bottom: footerRect.bottom - containerRect.top,
-                        height: footer.offsetHeight
-                    });
-
-                    const segments = [];
-                    let currentSegment = { start: 0, end: 0, height: 0, includeHeader: true };
-                    let headerHeight = header.offsetHeight;
-                    currentSegment.height = headerHeight;
-
-                    for (let i = 1; i < elements.length; i++) {
-                        const element = elements[i];
-                        const potentialHeight = element.bottom - currentSegment.start;
-
-                        if (potentialHeight > maxHeight && currentSegment.height > headerHeight) {
-                            currentSegment.end = elements[i - 1].bottom;
-                            segments.push(currentSegment);
-
-                            currentSegment = {
-                                start: currentSegment.end,
-                                end: 0,
-                                height: element.bottom - currentSegment.end,
-                                includeHeader: false
-                            };
-                        } else {
-                            currentSegment.height = potentialHeight;
-                            currentSegment.end = element.bottom;
-                        }
-                    }
-
-                    if (currentSegment.height > 0) {
-                        currentSegment.end = container.offsetHeight;
-                        segments.push(currentSegment);
-                    }
-
-                    button.textContent = `Đang tạo (0/${segments.length})...`;
-
-                    const buttons = document.querySelector('.save-buttons');
-                    buttons.style.visibility = 'hidden';
-
-                    const images = [];
-                    for (let i = 0; i < segments.length; i++) {
-                        const segment = segments[i];
-                        button.textContent = `Đang tạo (${i + 1}/${segments.length})...`;
-
-                        const tempContainer = document.createElement('div');
-                        tempContainer.style.cssText = `
-                            position: absolute;
-                            left: -9999px;
-                            top: 0;
-                            width: ${container.offsetWidth}px;
-                            background: #f2f4f7;
-                        `;
-                        tempContainer.className = 'container';
-
-                        const clonedContainer = container.cloneNode(true);
-
-                        const clonedButtons = clonedContainer.querySelector('.save-buttons');
-                        if (clonedButtons) {
-                            clonedButtons.style.display = 'none';
-                        }
-
-                        tempContainer.appendChild(clonedContainer);
-                        document.body.appendChild(tempContainer);
-
-                        await new Promise(resolve => setTimeout(resolve, 100));
-
-                        const canvas = await html2canvas(clonedContainer, {
-                            backgroundColor: '#f2f4f7',
-                            scale: scale,
-                            useCORS: true,
-                            allowTaint: false,
-                            imageTimeout: 10000,
-                            logging: false,
-                            width: container.offsetWidth,
-                            height: segment.end - segment.start,
-                            x: 0,
-                            y: segment.start,
-                            windowWidth: window.innerWidth,
-                            windowHeight: window.innerHeight
-                        });
-
-                        images.push(canvas.toDataURL('image/png', 1.0));
-
-                        document.body.removeChild(tempContainer);
-                    }
-
-                    buttons.style.visibility = 'visible';
-
-                    const now = new Date();
-                    const baseFilename = `TrendNews_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
-
-                    for (let i = 0; i < images.length; i++) {
-                        const link = document.createElement('a');
-                        link.download = `${baseFilename}_part${i + 1}.png`;
-                        link.href = images[i];
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                    }
-
-                    button.textContent = `Đã lưu ${segments.length} ảnh`;
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    }, 2000);
-
-                } catch (error) {
-                    console.error('Lưu phân đoạn thất bại:', error);
-                    const buttons = document.querySelector('.save-buttons');
-                    buttons.style.visibility = 'visible';
-                    button.textContent = 'Lưu thất bại';
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.disabled = false;
-                    }, 2000);
-                }
+            function exportPdf() {
+                // Browser print-to-PDF preserves document links as PDF link annotations.
+                window.print();
             }
 
             document.addEventListener('DOMContentLoaded', function() {
@@ -1100,6 +1184,70 @@ class HTMLRenderer:
         return candidates[:limit]
 
     @staticmethod
+    def _render_topic_radar(stats: List[Dict]) -> str:
+        """Render a compact radar from the current report's story mix."""
+        import math
+        import re
+
+        axes = [
+            ("AI", re.compile(r"\bai\b|llm|openai|claude|gemini|machine learning|mô hình ngôn ngữ", re.I)),
+            ("Dev", re.compile(r"coding|developer|programming|python|javascript|framework|devops|cloud|linux|cybersecurity|software|lập trình", re.I)),
+            ("VN", re.compile(r"vietnam|viet nam|việt nam|vnexpress|genk|tinh tế|dân trí|tuổi trẻ", re.I)),
+            ("Thế giới", re.compile(r"world|global|international|thế giới|quốc tế|bbc|reuters|guardian|new york times|china|europe|ukraine", re.I)),
+            ("Thị trường", re.compile(r"market|business|economy|finance|stock|investment|revenue|earnings|semiconductor|tài chính|thị trường|doanh nghiệp", re.I)),
+        ]
+        totals = [0] * len(axes)
+        for stat in stats or []:
+            topic = str(stat.get("word", ""))
+            titles = stat.get("titles", []) or [{}] * max(1, int(stat.get("count", 1) or 1))
+            for title in titles:
+                text = " ".join((topic, str(title.get("title", "")), str(title.get("title_vi", "")), str(title.get("source_name", ""))))
+                for idx, (_, pattern) in enumerate(axes):
+                    if pattern.search(text):
+                        totals[idx] += 1
+
+        peak = max(totals, default=0) or 1
+        # Keep quieter topics visible while still reflecting the actual report mix.
+        radii = [round(61 * (0.38 + 0.62 * math.sqrt(value / peak))) for value in totals]
+        cx, cy = 105, 84
+        angles = [-90, -18, 54, 126, 198]
+
+        def points(scale: float) -> str:
+            return " ".join(
+                f"{cx + math.cos(math.radians(angle)) * 61 * scale:.1f},{cy + math.sin(math.radians(angle)) * 61 * scale:.1f}"
+                for angle in angles
+            )
+
+        data_points = " ".join(
+            f"{cx + math.cos(math.radians(angle)) * radius:.1f},{cy + math.sin(math.radians(angle)) * radius:.1f}"
+            for angle, radius in zip(angles, radii)
+        )
+        grids = "\n".join(f'<polygon class="radar-grid" points="{points(level)}" />' for level in (0.25, 0.5, 0.75, 1.0))
+        spokes = "\n".join(
+            f'<line class="radar-axis" x1="{cx}" y1="{cy}" x2="{cx + math.cos(math.radians(angle)) * 61:.1f}" y2="{cy + math.sin(math.radians(angle)) * 61:.1f}" />'
+            for angle in angles
+        )
+        dots = "\n".join(
+            f'<circle class="radar-point" cx="{cx + math.cos(math.radians(angle)) * radius:.1f}" cy="{cy + math.sin(math.radians(angle)) * radius:.1f}" r="2.5" />'
+            for angle, radius in zip(angles, radii)
+        )
+        accessible = ", ".join(f"{label}: {value}" for (label, _), value in zip(axes, totals))
+        return f'''<div class="radar-block">
+            <svg class="topic-radar" viewBox="0 0 210 170" role="img" aria-label="Radar chủ đề. {html_escape(accessible)}">
+                <title>Radar chủ đề</title>
+                {grids}
+                {spokes}
+                <polygon class="radar-shape" points="{data_points}" />
+                {dots}
+                <text class="radar-label" x="105" y="12" text-anchor="middle">AI</text>
+                <text class="radar-label" x="174" y="61" text-anchor="start">Dev</text>
+                <text class="radar-label" x="151" y="158" text-anchor="start">VN</text>
+                <text class="radar-label" x="52" y="158" text-anchor="middle">Thế giới</text>
+                <text class="radar-label" x="4" y="61" text-anchor="start">Thị trường</text>
+            </svg>
+        </div>'''
+
+    @staticmethod
     def _meta_chips(title_data: Dict) -> str:
         """Meta chips hiển thị dưới title: source · rank · time · count · nguồn · AI."""
         chips = f'<span class="source-name">{html_escape(title_data["source_name"])}</span>\n'
@@ -1165,6 +1313,7 @@ class HTMLRenderer:
             mode_label = "Phân tích thời gian thực"
 
         hot_news_count = sum(len(stat["titles"]) for stat in report_data["stats"])
+        radar_html = HTMLRenderer._render_topic_radar(report_data["stats"])
 
         html = f"""<!DOCTYPE html>
 <html lang="vi">
@@ -1172,11 +1321,10 @@ class HTMLRenderer:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrendNews — Bản tin nóng</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='6' width='20' height='20' rx='5' fill='%23d9480f'/%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='6' width='20' height='20' rx='5' fill='%23ad7629'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>{REPORT_CSS}</style>
 </head>
 <body>
@@ -1184,28 +1332,32 @@ class HTMLRenderer:
         <div class="topbar">
             <div class="brand"><span class="brand-mark">&#9632;</span> TRENDNEWS</div>
             <input id="tn-search" class="search" type="text" placeholder="Lọc tin&hellip;  ( / )" autocomplete="off" spellcheck="false">
-            <div class="save-buttons">
-                <button class="save-btn" onclick="saveAsImage()">Lưu ảnh</button>
-                <button class="save-btn" onclick="saveAsMultipleImages()">Lưu từng đoạn</button>
+            <div class="export-tools">
+                <button class="export-btn" type="button" onclick="exportPdf()" title="Xuất PDF có thể bấm mở các liên kết bài viết">Xuất PDF</button>
             </div>
         </div>
 
         <div class="header">
-            <div class="header-eyebrow">{mode_label} &middot; {now.strftime("%d/%m/%Y %H:%M")}</div>
-            <h1 class="header-title">Bản tin nóng</h1>
-            <div class="header-info">
-                <div class="info-item">
-                    <span class="info-label">Tổng tin</span>
-                    <span class="info-value">{total_titles}</span>
+            <div class="header-main">
+                <div class="header-copy">
+                    <div class="header-eyebrow">{mode_label} &middot; {now.strftime("%d/%m/%Y %H:%M")}</div>
+                    <h1 class="header-title">Bản tin nóng</h1>
+                    <div class="header-info">
+                        <div class="info-item">
+                            <span class="info-label">Tổng tin</span>
+                            <span class="info-value">{total_titles}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Nổi bật</span>
+                            <span class="info-value">{hot_news_count}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Chủ đề</span>
+                            <span class="info-value">{len(report_data["stats"])}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Nổi bật</span>
-                    <span class="info-value">{hot_news_count}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Chủ đề</span>
-                    <span class="info-value">{len(report_data["stats"])}</span>
-                </div>
+                {radar_html}
             </div>
         </div>
 """
@@ -1406,22 +1558,19 @@ class HTMLRenderer:
 
         html += """            <div id="tn-no-results" class="no-results">Không có tin nào khớp bộ lọc</div>
         </div>
-
-        <div class="footer">
-            <div class="footer-content">
-                TrendNews &middot; fork của <a href="https://github.com/sansan0/TrendRadar" target="_blank" class="footer-link">TrendRadar</a>
 """
 
         if update_info:
-            html += f"""                <br>
-                <span style="color: var(--accent-deep);">
+            html += f"""            <div class="footer">
+                <div class="footer-content">
+                    <span style="color: var(--accent-deep);">
                     Phát hiện phiên bản mới {update_info['remote_version']}，phiên bản hiện tại {update_info['current_version']}
-                </span>
+                    </span>
+                </div>
+            </div>
 """
 
-        html += f"""            </div>
-        </div>
-    </div>
+        html += f"""    </div>
 
     <script>{REPORT_JS}</script>
 </body>
