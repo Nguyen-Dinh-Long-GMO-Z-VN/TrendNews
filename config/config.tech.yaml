@@ -9,19 +9,11 @@ crawler:
   default_proxy: "http://127.0.0.1:10086"
   rss_max_items: 50
 
-# 🔸 daily（当日汇总模式）
-#   • 推送时机：按时推送(默认每小时推送一次)
-#   • 显示内容：当日所有匹配新闻 + 新增新闻区域
-#   • 适用场景：日报总结、全面了解当日热点趋势
-#
-# 🔸 current（当前榜单模式）
-#   • 推送时机：按时推送(默认每小时推送一次)
-#   • 显示内容：当前榜单匹配新闻 + 新增新闻区域
-#   • 适用场景：实时热点追踪、了解当前最火的内容
-#
-# 🔸 incremental（增量监控模式）
-#   • 推送时机：有新增才推送
-#   • 显示内容：新出现的匹配频率词新闻
+# `report.mode` xác định cách tổng hợp nội dung, không đặt lịch chạy.
+# Lịch do môi trường triển khai điều khiển: GitHub Actions hoặc CRON_SCHEDULE trong Docker.
+# daily: tổng hợp tin khớp trong ngày.
+# current: báo cáo theo bảng xếp hạng mới nhất.
+# incremental: ưu tiên các tin mới xuất hiện từ lần thu thập trước.
 #   • 适用场景：避免重复信息干扰
 
 # 推送模式选择

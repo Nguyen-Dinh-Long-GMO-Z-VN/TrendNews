@@ -1,124 +1,25 @@
-# TrendRadar - Modular Source Code
+# Các module ứng dụng
 
-Đây là cấu trúc module hóa của TrendRadar, được refactor từ file `main.py` gốc.
+`main.py` ở thư mục gốc là entry point và composition root của crawler. Thư mục `src/` chứa các module được entry point điều phối; MCP server nằm riêng ở `mcp_server/`. Xem sơ đồ đầy đủ tại [`../docs/architecture.md`](../docs/architecture.md).
 
-## Cấu Trúc
+| Module | Trách nhiệm thực tế |
+| --- | --- |
+| `config/` | Đọc `config/config.yaml`, biến môi trường và danh sách từ khóa; xuất cấu hình dùng chung `CONFIG`. |
+| `core/` | Gọi NewsNow API, lấy RSS và quản lý lịch sử gửi; `main.py` điều phối hai bộ thu thập. `core/analyzer.py` là placeholder, không phải luồng chạy đầy đủ. |
+| `processors/` | Lưu và đọc snapshot tin, phát hiện tin mới, khớp nhóm từ khóa, tính thống kê và gộp tin trùng. |
+| `analysis/` | Tích hợp nhà cung cấp AI, lọc theo sở thích, dịch tiêu đề và phân tích nhóm tài sản. Từng tính năng phụ thuộc cấu hình và khả năng truy cập nhà cung cấp. |
+| `renderers/` | `html_renderer.py` tạo báo cáo HTML một trang; `telegram_renderer.py` định dạng nội dung Telegram. |
+| `notifiers/` | `manager.py` điều phối gửi Telegram và email theo cấu hình. |
+| `utils/` | Tiện ích về tệp, thời gian, văn bản, định dạng và kiểm tra phiên bản. |
 
-### 📦 config/
-Quản lý cấu hình ứng dụng
-- `constants.py`: VERSION, SMTP_CONFIGS
-- `settings.py`: load_config(), CONFIG
+## Điểm vào và đầu ra
 
-### 🔧 core/
-Core components chính
-- `data_fetcher.py`: Lấy dữ liệu từ API
-- `push_manager.py`: Quản lý push notifications
-- `analyzer.py`: Main analyzer (simplified)
-
-### ⚙️ processors/
-Xử lý dữ liệu
-- `data_processor.py`: Parse và save titles
-- `statistics.py`: Tính toán thống kê
-- `frequency_words.py`: Xử lý từ khóa
-
-### 🎨 renderers/
-Render nội dung cho các platforms
-- `base.py`: Base renderer class
-- `html_renderer.py`: HTML reports
-- `feishu_renderer.py`: Feishu messages
-- `dingtalk_renderer.py`: DingTalk messages
-- `wework_renderer.py`: WeWork messages
-- `telegram_renderer.py`: Telegram messages
-- `ntfy_renderer.py`: ntfy messages
-
-### 📤 notifiers/
-Gửi thông báo
-- `base.py`: Base notifier class
-- `feishu.py`: Feishu notifications
-- `dingtalk.py`: DingTalk notifications
-- `wework.py`: WeWork notifications
-- `telegram.py`: Telegram notifications
-- `email.py`: Email notifications
-- `ntfy.py`: ntfy notifications
-- `manager.py`: Notification orchestration
-
-### 🛠️ utils/
-Utility functions
-- `time_utils.py`: Time formatting
-- `file_utils.py`: File operations
-- `text_utils.py`: Text processing
-- `format_utils.py`: Content formatting
-
-## Import Examples
-
-```python
-# Config
-from src.config import VERSION, CONFIG
-
-# Core
-from src.core import DataFetcher, PushRecordManager, NewsAnalyzer
-
-# Processors
-from src.processors import (
-    load_frequency_words,
-    calculate_news_weight,
-    save_titles_to_file,
-)
-
-# Utils
-from src.utils import (
-    get_beijing_time,
-    clean_title,
-    format_rank_display,
-)
-
-# Renderers
-from src.renderers import HTMLRenderer, FeishuRenderer
-
-# Notifiers
-from src.notifiers import FeishuNotifier, EmailNotifier
+```bash
+python main.py
 ```
 
-## Usage
+`main.py` tải cấu hình, thu thập NewsNow và RSS song song, lưu snapshot dưới `output/<ngày>/txt/`, chạy pipeline phân tích, rồi tạo HTML dưới `output/<ngày>/html/`. Với báo cáo tổng hợp trong ngày, `HTMLRenderer` cũng cập nhật `index.html` ở thư mục gốc để dùng trên GitHub Pages.
 
-```python
-from src.main import main
+MCP server được khởi chạy riêng bằng `python -m mcp_server.server`. Server cung cấp truy vấn, tìm kiếm, phân tích, đọc cấu hình/trạng thái và yêu cầu crawl qua `stdio` hoặc HTTP; dữ liệu lịch sử đến từ thư mục `output/` của môi trường chạy MCP.
 
-if __name__ == "__main__":
-    main()
-```
-
-## Testing
-
-Mỗi module có thể được test độc lập:
-
-```python
-# Test config
-from src.config import CONFIG
-assert CONFIG is not None
-
-# Test utils
-from src.utils import clean_title
-assert clean_title("  Test  ") == "Test"
-
-# Test processors
-from src.processors import load_frequency_words
-word_groups, filters = load_frequency_words()
-assert len(word_groups) > 0
-```
-
-## Status
-
-- ✅ Config: Fully implemented
-- ✅ Utils: Fully implemented  
-- ✅ Core: Fully implemented (simplified analyzer)
-- ✅ Processors: Partially implemented
-- 🔄 Renderers: Structure only
-- 🔄 Notifiers: Structure only
-
-## Notes
-
-- Modular structure hoàn chỉnh
-- Backward compatible với main.py gốc
-- Sẵn sàng cho full implementation
-- Tuân thủ SOLID principles
+Các kênh gửi hiện được cài đặt trong `src/notifiers/` là Telegram và email. Cấu hình có thể chứa thêm khóa cho nền tảng khác để tương thích với thành phần cũ, nhưng module hiện tại chưa có notifier tương ứng.

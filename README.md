@@ -13,6 +13,16 @@ TrendRadar thu thập tin nóng và RSS, lọc theo chủ đề quan tâm, rồi
 - Tùy chọn lọc tin bằng mô tả sở thích tự nhiên, dịch tiêu đề sang tiếng Việt và phân tích tin theo nhóm tài sản bằng AI. Các tính năng này cần cấu hình nhà cung cấp AI; riêng dịch và lọc AI mặc định tắt.
 - Cung cấp MCP server để truy vấn tin mới, tìm kiếm tin cũ và phân tích xu hướng từ dữ liệu đã lưu.
 
+## Kiến trúc và giao diện
+
+![Sơ đồ kiến trúc TrendRadar bằng tiếng Việt](docs/assets/architecture-vi.png)
+
+Sơ đồ chi tiết và phiên bản Mermaid có thể chỉnh sửa nằm trong [`docs/architecture.md`](docs/architecture.md).
+
+Giao diện báo cáo là một trang HTML tĩnh được tạo bởi `HTMLRenderer`. Trang có ô tìm kiếm trực tiếp, radar chủ đề, nhóm tin nổi bật, các nhóm từ khóa, liên kết bài gốc và nút xuất PDF qua hộp thoại in của trình duyệt.
+
+![Ảnh chụp giao diện báo cáo một trang](docs/assets/report-ui.png)
+
 ## Chạy nhanh
 
 Yêu cầu Python **3.10+** và kết nối mạng để lấy tin. Chạy từ thư mục gốc dự án:
@@ -93,8 +103,11 @@ Chế độ HTTP dùng endpoint `http://127.0.0.1:3333/mcp`. Các công cụ g�
 | [`src/renderers/`](src/renderers/) | Tạo báo cáo HTML và nội dung Telegram |
 | [`src/notifiers/`](src/notifiers/) | Gửi Telegram và email |
 | [`mcp_server/`](mcp_server/) | MCP tools truy vấn dữ liệu đã lưu |
+| [`docs/architecture.md`](docs/architecture.md) | Luồng xử lý, ranh giới MCP, giao diện và triển khai |
+| [`docs/assets/`](docs/assets/) | Sơ đồ kiến trúc và ảnh chụp giao diện |
+| [`docker/`](docker/) | Ảnh container cho crawler và cấu hình Supercronic |
 
-Workflow [`.github/workflows/crawler.yml`](.github/workflows/crawler.yml) chạy crawler mỗi giờ trên GitHub Actions. Thư mục `docker/` chứa cấu hình container, nhưng `docker/Dockerfile` hiện chưa chép thư mục `src/` vào image; vì vậy hướng dẫn chạy nhanh ở trên dùng Python trực tiếp.
+Workflow [`.github/workflows/crawler.yml`](.github/workflows/crawler.yml) chạy mỗi ngày lúc **08:00 giờ Việt Nam (UTC+7)** hoặc theo yêu cầu thủ công. Nó chạy crawler, tạo `index.html`, rồi deploy riêng file đó lên GitHub Pages. Trong Docker, `docker/Dockerfile` đóng gói crawler; Compose gắn cấu hình và `output/` từ máy chủ, còn Supercronic chạy theo `CRON_SCHEDULE`.
 
 ## Giấy phép
 
